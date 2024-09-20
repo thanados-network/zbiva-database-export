@@ -10,8 +10,8 @@ from sql import get_literature, get_types
 
 def get_data() -> dict[str, Any]:
     try:
-        with closing(psycopg2.connect(**DB_PARAMETER)) as conn:
-            with closing(conn.cursor()) as cursor:
+        with psycopg2.connect(**DB_PARAMETER) as conn:
+            with conn.cursor() as cursor:
                 types = get_types(cursor)
                 literature = get_literature(cursor)
 
@@ -26,21 +26,15 @@ def get_data() -> dict[str, Any]:
 
 
 def get_literature_csv(data_: list[Literature]) -> list[dict[str, str | Any]]:
-
-    list_ = []
-    for lit in data_:
-        list_.append({
-            'id': lit.id_,
-            'name': lit.name,
-            'type_ids': '5' if not lit.publication else '4',
-            'description': lit.description
-
-        })
-    return list_
+    return [{'id': lit.id_,
+             'name': lit.name,
+             'type_ids': lit.type_ids,
+             'description': lit.description} for lit in data_]
 
 
 if __name__ == "__main__":
     data = get_data()
     literature_csv = get_literature_csv(data['literature'])
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
+    # print(len(literature_csv))
     # print(literature_csv)
