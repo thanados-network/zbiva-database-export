@@ -1,5 +1,8 @@
+from typing import Any
+
+
 class Literature:
-    def __init__(self, data):
+    def __init__(self, data: dict[str, Any]) -> None:
         self.id_ = data.get('id')
         self.autor = data.get('autor')
         self.title = data.get('title')
@@ -29,6 +32,4 @@ class Literature:
         return name
 
     def get_description(self) -> str:
-        return f"""{self.autor + ',' or ''} 
-                    {self.title or ''} 
-                    {'. In: ' + self.publication + ',' or ''} """
+        return f"""{self.autor + ',' or ''} {self.title or ''} {'. In: ' + self.publication + ',' or ''} """

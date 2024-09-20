@@ -1,9 +1,11 @@
+from typing import Any
+
 from globals import TYPE_TABLES
 from literature import Literature
 
 
-def get_literature(cursor) -> list[Literature]:
-    query = f"""
+def get_literature(cursor: Any) -> list[Literature]:
+    query = """
             SELECT
                 id, 
                 avtor AS autor,
@@ -22,7 +24,7 @@ def get_literature(cursor) -> list[Literature]:
     return [Literature(dict(zip(columns, row))) for row in cursor.fetchall()]
 
 
-def get_types(cursor) -> dict[str, list[dict[str, str]]]:
+def get_types(cursor: Any) -> dict[str, list[dict[str, str]]]:
     types = {}
     for table in TYPE_TABLES:
         query = f"""
