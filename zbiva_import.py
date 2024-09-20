@@ -11,6 +11,28 @@ db_params = {
     "host": "localhost",
     "port": 5432}
 
+CSV_TEMPLATE = {
+    'id': '',
+    'name': '',
+    'alias': '',
+    'description': '',
+    'begin_from': '',
+    'begin_to': '',
+    'begin_comment': '',
+    'end_from': '',
+    'end_to': '',
+    'end_comment': '',
+    'wkt': '',
+    'type_ids': '',
+    'value_types': '',
+    'reference_system_wikidata': '',
+    'reference_system_geonames': '',
+    'administrative_unit': '',
+    'historical_place': '',
+    'openatlas_class': '',
+    'parent_id': '',
+    'openatlas_parent_id': ''}
+
 TYPE_TABLES = [
     'lastnosti_najdisc_grobisceoddaljenost',
     'lastnosti_najdisc_grobiscepokop',
@@ -96,6 +118,34 @@ def get_data() -> dict[str, Any]:
         return {}
 
 
+def get_literature_csv(data_: dict[str, Any]) -> dict[str, Any]:
+    list_ = []
+    for lit in data_:
+        # Get name, problem is, if no Autor | publication | title exist
+        if lit.get('autor'):
+            name = f"{lit['autor'].split(' ')[0]} {lit['date']}"
+        elif lit.get('publication'):
+            name = f"{lit['publication'].split(' ')[0]} {lit['date']}"
+        elif lit.get('title'):
+            name = f"{lit['title'].split(' ')[0]} {lit['date']}"
+
+        # todo: split description to more separate fields
+        description = f"""{lit.get('autor') + ',' or ''} 
+                    {lit.get('title') or ''} 
+                    {'. In: ' + lit.get('publication') + ',' or ''} """
+        print(description)
+
+        list_.append({
+            'id': lit['id'],
+            'name': name,
+            'type_ids': '5' if not lit.get('publication') else '4',
+
+        })
+    return list_
+
+
 if __name__ == "__main__":
     data = get_data()
-    print(json.dumps(data, ensure_ascii=False).encode('utf8'))
+    literature_csv = get_literature_csv(data['literature'])
+    # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
+    # print(literature_csv)
