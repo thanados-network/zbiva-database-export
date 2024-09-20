@@ -1,4 +1,3 @@
-from contextlib import closing
 from typing import Any
 
 import psycopg2
@@ -12,13 +11,9 @@ def get_data() -> dict[str, Any]:
     try:
         with psycopg2.connect(**DB_PARAMETER) as conn:
             with conn.cursor() as cursor:
-                types = get_types(cursor)
-                literature = get_literature(cursor)
-
                 return {
-                    "types": types,
-                    "literature": literature
-                }
+                    "types": get_types(cursor),
+                    "literature": get_literature(cursor)}
 
     except psycopg2.Error as e:
         print(f"Database error: {e}")
@@ -38,3 +33,5 @@ if __name__ == "__main__":
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
     # print(len(literature_csv))
     # print(literature_csv)
+
+# todo: Get only the literature we need for sites
