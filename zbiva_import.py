@@ -4,7 +4,7 @@ import psycopg2
 
 from globals import DB_PARAMETER
 from literature import Literature
-from sql import get_literature, get_types
+from sql import get_literature, get_places, get_types
 
 
 def get_data() -> dict[str, Any]:
@@ -13,7 +13,8 @@ def get_data() -> dict[str, Any]:
             with conn.cursor() as cursor:
                 return {
                     "types": get_types(cursor),
-                    "literature": get_literature(cursor)}
+                    "literature": get_literature(cursor),
+                    "places": get_places(cursor)}
 
     except psycopg2.Error as e:
         print(f"Database error: {e}")
