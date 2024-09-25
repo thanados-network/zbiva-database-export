@@ -2,14 +2,14 @@ from contextlib import contextmanager
 
 import psycopg2
 
-from Citation import Citation
+from citation import Citation
 from globals import TYPE_TABLES
 from literature import Literature
 from place import Place
 
 
 @contextmanager
-def get_cursor():
+def get_cursor() -> None:
     connection = psycopg2.connect(
         dbname="zbiva",
         user="postgres",
@@ -28,7 +28,7 @@ def get_cursor():
         connection.close()
 
 
-def get_places() -> list[Place]:
+def get_places_from_database() -> list[Place]:
     query = """
             SELECT 
                 id as id,
@@ -66,7 +66,7 @@ def get_places() -> list[Place]:
 
 
 # todo: Get only the literature we need for sites
-def get_literature() -> list[Literature]:
+def get_literature_from_database() -> list[Literature]:
     query = """
             SELECT
                 id, 
@@ -89,7 +89,7 @@ def get_literature() -> list[Literature]:
     return lit
 
 
-def get_citation() -> list[Citation]:
+def get_citation_from_database() -> list[Citation]:
     query = """
             SELECT
                 id, 
@@ -106,7 +106,7 @@ def get_citation() -> list[Citation]:
     return cit
 
 
-def get_types() -> dict[str, list[dict[str, str]]]:
+def get_types_from_database() -> dict[str, list[dict[str, str]]]:
     types = {}
     for table in TYPE_TABLES:
         query = f"""

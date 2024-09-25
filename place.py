@@ -1,5 +1,10 @@
+from typing import Any
+
+from citation import Citation
+
+
 class Place:
-    def __init__(self, data):
+    def __init__(self, data: dict[str, str]):
         self.id_ = data['id']
         self.begin = data['begin']
         self.end = data['end']
@@ -25,7 +30,21 @@ class Place:
         self.description_2 = data['description_2']
         self.summary = data['summary']
         self.primary_type_id = data['primary_type_id']
-        self.citations = []
+        self.citations: list[str] = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.__dict__)
+
+    def get_citations(self, citations: list[Citation]) -> None:
+        for citation in citations:
+            if citation.place_id == self.id_:
+                self.citations.append(citation.get_csv_data())
+
+    def get_csv_data(self) -> dict[str, Any]:
+        return {
+            'id': self.id_,
+            'name': self.name,
+            'description': self.description,
+            'references': ' '.join(self.citations),
+            'type_ids': [],  # todo: get types
+        }

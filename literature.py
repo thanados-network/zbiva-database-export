@@ -20,6 +20,13 @@ class Literature:
     def __repr__(self) -> str:
         return str(self.__dict__)
 
+    def get_csv_data(self) -> dict[str, Any]:
+        return {
+            'id': self.id,
+            'name': self.name,
+            'type_ids': self.type_ids,
+            'description': self.description}
+
     # Get name, problem is, if no Autor | publication | title exist
     def get_name(self) -> str:
         if self.autor:
@@ -85,6 +92,6 @@ class Literature:
             return doi
 
         citation = (f"{get_autor()} {get_title()}"
-                f"{get_publication()} {get_location_date()}{get_pages()}.")
+                    f"{get_publication()} {get_location_date()}{get_pages()}.")
         references = get_pdf_link() + get_doi() + get_signature()
         return citation + references

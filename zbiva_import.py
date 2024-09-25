@@ -1,23 +1,16 @@
-from typing import Any
-
-from literature import Literature
-from sql import get_citation, get_literature, get_places, get_types
-
-
-def get_literature_csv(data: list[Literature]) -> list[dict[str, str | Any]]:
-    return [{'id': lit.id,
-             'name': lit.name,
-             'type_ids': lit.type_ids,
-             'description': lit.description} for lit in data]
-
+from sql import (
+    get_citation_from_database, get_literature_from_database,
+    get_places_from_database, get_types_from_database)
 
 if __name__ == "__main__":
-    types = get_types()
-    literature = get_literature()
-    places = get_places()
-    citation = get_citation()
+    types = get_types_from_database()
+    literature = get_literature_from_database()
+    places = get_places_from_database()
+    citations = get_citation_from_database()
+    for place in places:
+        place.get_citations(citations)
 
-    literature_csv = get_literature_csv(literature)
+    literature_csv = [lit.get_csv_data() for lit in literature]
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
     # print(len(literature_csv))
     # print(literature_csv)
