@@ -1,38 +1,23 @@
 from typing import Any
 
-import psycopg2
-
-from globals import DB_PARAMETER
 from literature import Literature
-from sql import get_literature, get_places, get_types
+from sql import get_citation, get_literature, get_places, get_types
 
 
-def get_data() -> dict[str, Any]:
-    try:
-        with psycopg2.connect(**DB_PARAMETER) as conn:
-            with conn.cursor() as cursor:
-                return {
-                    "types": get_types(cursor),
-                    "literature": get_literature(cursor),
-                    "places": get_places(cursor)}
-
-    except psycopg2.Error as e:
-        print(f"Database error: {e}")
-        return {}
-
-
-def get_literature_csv(data_: list[Literature]) -> list[dict[str, str | Any]]:
-    return [{'id': lit.id_,
+def get_literature_csv(data: list[Literature]) -> list[dict[str, str | Any]]:
+    return [{'id': lit.id,
              'name': lit.name,
              'type_ids': lit.type_ids,
-             'description': lit.description} for lit in data_]
+             'description': lit.description} for lit in data]
 
 
 if __name__ == "__main__":
-    data = get_data()
-    literature_csv = get_literature_csv(data['literature'])
+    types = get_types()
+    literature = get_literature()
+    places = get_places()
+    citation = get_citation()
+
+    literature_csv = get_literature_csv(literature)
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
     # print(len(literature_csv))
     # print(literature_csv)
-
-# todo: Get only the literature we need for sites

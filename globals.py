@@ -1,10 +1,3 @@
-DB_PARAMETER = {
-    "dbname": "zbiva",
-    "user": "postgres",
-    "password": "postgres",
-    "host": "localhost",
-    "port": 5432}
-
 CSV_TEMPLATE = {
     'id': '',
     'name': '',

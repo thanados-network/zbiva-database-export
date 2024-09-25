@@ -1,26 +1,31 @@
 class Place:
-    def __init__(self):
-        self.data = {}
-
-    def lazy_initialize(self, key):
-        """This method is called to initialize values lazily."""
-        print(f"Lazily initializing value for '{key}'")
-        return f"Computed value for {key}"
-
-    def __getattr__(self, key):
-        # If the key is not found in _data, lazily initialize it
-        if key not in self._data:
-            self._data[key] = self.lazy_initialize(key)
-        return self._data[key]
-
-    def __setattr__(self, key, value):
-        # Ensure that normal attributes are handled correctly
-        if key == "_data":
-            super().__setattr__(key, value)
-        else:
-            # Set the key's value directly if provided
-            self._data[key] = value
+    def __init__(self, data):
+        self.id_ = data['id']
+        self.begin = data['begin']
+        self.end = data['end']
+        self.name = data['name']
+        self.admin_settlement = data['admin_settlement']
+        self.admin_unit = data['admin_unit']
+        self.admin_district = data['admin_district']
+        self.admin_state = data['admin_state']
+        self.admin_state2 = data['admin_state2']
+        self.first_publication = data['first_publication']
+        self.location_precision = data['location_precision']
+        self.coordinate = data['coordinate']
+        self.location_description = data['location_description']
+        self.plot_number = data['plot_number']
+        self.data_quality = data['data_quality']
+        self.archaeological_quality = data['archaeological_quality']
+        self.special_finds = data['special_finds']
+        self.comments = data['comments']
+        self.primary_chronology = data['primary_chronology']
+        self.certainty_of_chronology = data['certainty_of_chronology']
+        self.chronology_description = data['chronology_description']
+        self.description = data['description']
+        self.description_2 = data['description_2']
+        self.summary = data['summary']
+        self.primary_type_id = data['primary_type_id']
+        self.citations = []
 
     def __repr__(self):
-        return f"Site({self._data})"
-
+        return str(self.__dict__)

@@ -3,7 +3,7 @@ from typing import Any
 
 class Literature:
     def __init__(self, data: dict[str, Any]) -> None:
-        self.id_ = data.get('id')
+        self.id = data.get('id')
         self.autor = data.get('autor')
         self.title = data.get('title')
         self.publication = data.get('publication')
