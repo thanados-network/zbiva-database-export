@@ -13,7 +13,7 @@ class Citation:
         return self.pages.replace(' ', '')
 
     def get_csv_data(self) -> str:
-        pages = self.pages.replace(' ', '')
+        pages = self.pages.replace(' ', '') if self.pages else ''
         literature_id = self.get_openatlas_literature_id()
         return f"{literature_id};{pages}"
 

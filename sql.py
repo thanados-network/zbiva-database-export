@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 
 import psycopg2
+from pydantic.fields import defaultdict
 
 from citation import Citation
 from globals import TYPE_TABLES
@@ -106,8 +107,8 @@ def get_citation_from_database() -> list[Citation]:
     return cit
 
 
-def get_types_from_database() -> dict[str, list[dict[str, str]]]:
-    types = {}
+def get_types_from_database() -> dict[str, dict[str, str]]:
+    types = defaultdict(dict)
     for table in TYPE_TABLES:
         query = f"""
                 SELECT koda, opis
@@ -115,6 +116,7 @@ def get_types_from_database() -> dict[str, list[dict[str, str]]]:
             """
         with get_cursor() as cursor:
             cursor.execute(query)
-            types[table.replace('lastnosti_najdisc_', '')] = [
-                {'koda': a[0], 'opis': a[1]} for a in cursor.fetchall()]
+            for row in cursor.fetchall():
+                types[table.replace('lastnosti_najdisc_', '')][row[0]] = row[1]
+
     return types
