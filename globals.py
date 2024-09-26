@@ -37,17 +37,6 @@ TYPE_TABLES = [
     'lastnosti_najdisc_topografskalega',
     'lastnosti_najdisc_zakladnanajdbaobmocje']
 
-SITE_TABLES = ['najdisca_najdisce']
 
-SITE_TYPES = [
-    'najdisca_kultniprostor',
-    'najdisca_najdisce_najdbe',
-    'najdisca_najdisce_topografske_lege',
-    'najdisca_ostalo',  # has only najdisce_id!!! ostalo means other!
-    'najdisca_zakladnanajdba']
 
-SITE_SPECIAL_TYPES = [
-    'najdisca_grobisce',
-    'najdisca_naselbina']
 
-SITE_CITATION = ['najdisca_najdisceliteratura']

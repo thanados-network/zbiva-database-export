@@ -31,6 +31,7 @@ class Place:
         self.summary = data['summary']
         self.primary_type_id = data['primary_type_id']
         self.citations: list[str] = []
+        self.types: list[str] = []
 
     def __repr__(self) -> str:
         return str(self.__dict__)

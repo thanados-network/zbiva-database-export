@@ -107,7 +107,7 @@ def get_citation_from_database() -> list[Citation]:
     return cit
 
 
-def get_types_from_database() -> dict[str, dict[str, str]]:
+def get_type_names_from_database() -> dict[str, dict[str, str]]:
     types = defaultdict(dict)
     for table in TYPE_TABLES:
         query = f"""
@@ -118,5 +118,116 @@ def get_types_from_database() -> dict[str, dict[str, str]]:
             cursor.execute(query)
             for row in cursor.fetchall():
                 types[table.replace('lastnosti_najdisc_', '')][row[0]] = row[1]
+    return types
 
+
+def fetch_site_grave_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id,
+            nacin_pokopa_id,
+            oddaljenost_id,
+            prostor_id,
+            tip_id,
+            usmerjenost_pobocja_id,
+            velikost_id 
+        FROM public.najdisca_grobisce;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = [row[1], row[2], row[3], row[4], row[5], row[6]]
+    return types
+
+
+def fetch_site_cult_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id,
+            tip_id
+        FROM public.najdisca_kultniprostor;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = [row[1]]
+    return types
+
+
+def fetch_site_finds_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id,
+            najdba_id
+        FROM public.najdisca_najdisce_najdbe;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = [row[1]]
+    return types
+
+
+def fetch_site_topography_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id,
+            topografskalega_id
+        FROM public.najdisca_najdisce_topografske_lege;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = [row[1]]
+    return types
+
+
+def fetch_site_settlement_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id,
+            tip_id,
+            utrjenost_id,
+            velikost_id,
+            vrste_sledov_id
+        FROM public.najdisca_naselbina;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = [row[1], row[2], row[3], row[4]]
+    return types
+
+
+def fetch_site_other_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id
+        FROM public.najdisca_ostalo;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = ['OTHER']
+    return types
+
+
+def fetch_site_depot_types() -> dict[str, list[str]]:
+    types = defaultdict(list)
+    query = f"""
+        SELECT 
+            najdisce_id,
+            obmocje_id
+        FROM public.najdisca_zakladnanajdba;
+        """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            types[row[0]] = [row[1]]
     return types
