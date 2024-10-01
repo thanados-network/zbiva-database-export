@@ -13,18 +13,9 @@ from sql import (
 
 
 def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
-    countries = {
-        'austria': [],
-        'slovenia': [],
-        'other': []}
+    countries = defaultdict(list)
     for place_ in places_:
-        match place_.admin_state2:
-            case 'avstrija':
-                countries['austria'].append(place_)
-            case 'slovenija':
-                countries['slovenia'].append(place_)
-            case _:
-                countries['other'].append(place_)
+        countries[place_.admin_state2].append(place_)
     return countries
 
 
@@ -55,9 +46,9 @@ if __name__ == "__main__":
 
     # Get only slovenian places
     sorted_places_by_country = sort_places_by_country(places)
-
+    print([i for i in sorted_places_by_country])
     sorted_places_by_type = defaultdict(list)
-    for i in sorted_places_by_country['slovenia']:
+    for i in sorted_places_by_country['slovenija']:
         sorted_places_by_type[i.primary_type_id].append(i)
 
     print(len(sorted_places_by_type['NVR02']))
