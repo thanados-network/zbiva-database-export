@@ -1,6 +1,6 @@
 class Citation:
     def __init__(self, data: dict[str, str]) -> None:
-        self.id_ = data['id']
+        self.id_ = data["id"]
         self.pages = data['pages']
         self.description = data['description']
         self.origin_literature_id = data['literature_id']
@@ -14,9 +14,4 @@ class Citation:
 
     def get_csv_data(self) -> str:
         pages = self.pages.replace(' ', '') if self.pages else ''
-        literature_id = self.get_openatlas_literature_id()
-        return f"{literature_id};{pages}"
-
-    def get_openatlas_literature_id(self) -> str:
-        # Todo: make OpenAtlas API call to get the OpenAtlas ID
-        return self.origin_literature_id # delete if OA ID works
+        return f"literature_{self.origin_literature_id};{pages}"

@@ -67,7 +67,6 @@ def get_places_from_database() -> list[Place]:
     return places
 
 
-# todo: Get only the literature we need for sites
 def get_literature_from_database() -> list[Literature]:
     query = """
             SELECT
@@ -91,7 +90,7 @@ def get_literature_from_database() -> list[Literature]:
     return lit
 
 
-def get_citation_from_database() -> list[Citation]:
+def get_place_citation_from_database() -> list[Citation]:
     query = """
             SELECT
                 id, 

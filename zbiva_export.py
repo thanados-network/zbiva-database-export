@@ -1,12 +1,14 @@
 from collections import defaultdict
 from typing import Any
 
+from citation import Citation
+from literature import Literature
 from place import Place
 from sql import (
     fetch_site_cult_types, fetch_site_finds_types, fetch_site_grave_types,
     fetch_site_other_types, fetch_site_settlement_types,
     fetch_site_topography_types, fetch_site_depot_types,
-    get_citation_from_database,
+    get_place_citation_from_database,
     get_literature_from_database,
     get_places_from_database, get_type_names_from_database)
 
@@ -31,17 +33,26 @@ def get_type_codes_for_sites() -> dict[str, list[str]]:
     return site_types
 
 
+
+def get_place_literature(
+        lit: list[Literature],
+        cit: list[Citation]) -> list[Literature]:
+    place_citation_lit_ids = {c.origin_literature_id for c in cit}
+    return [l for l in lit if l.id_ in place_citation_lit_ids]
+
 if __name__ == "__main__":
     types_names = get_type_names_from_database()
     literature = get_literature_from_database()
     places = get_places_from_database()
-    citations = get_citation_from_database()
+    citations = get_place_citation_from_database()
     types = get_type_codes_for_sites()
+
     for place in places:
         place.get_citations(citations)
         place.types.extend(types[place.id_])
 
-    literature_csv = [lit.get_csv_data() for lit in literature]
+    place_literature = get_place_literature(literature, citations)
+    literature_csv = [lit.get_csv_data() for lit in place_literature]
 
     # Get only slovenian places
     sorted_places_by_country = sort_places_by_country(places)

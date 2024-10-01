@@ -3,7 +3,7 @@ from typing import Any
 
 class Literature:
     def __init__(self, data: dict[str, Any]) -> None:
-        self.id = data.get('id')
+        self.id_ = data.get('id')
         self.autor = data.get('autor')
         self.title = data.get('title')
         self.publication = data.get('publication')
@@ -22,7 +22,7 @@ class Literature:
 
     def get_csv_data(self) -> dict[str, Any]:
         return {
-            'id': self.id,
+            'id': self.id_,
             'name': self.name,
             'type_ids': self.type_ids,
             'description': self.description}
