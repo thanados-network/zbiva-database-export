@@ -1,7 +1,8 @@
+from collections import defaultdict
 from contextlib import contextmanager
+from typing import Any, Generator
 
 import psycopg2
-from pydantic.fields import defaultdict
 
 from citation import Citation
 from globals import TYPE_TABLES
@@ -10,14 +11,14 @@ from place import Place
 
 
 @contextmanager
-def get_cursor() -> None:
+def get_cursor() -> Generator[Any, None, None]:
     connection = psycopg2.connect(
         dbname="zbiva",
         user="postgres",
         password="postgres",
         host="localhost",
         port="5432")
-    cursor = connection.cursor()
+    cursor: Any = connection.cursor()
     try:
         yield cursor
         connection.commit()
@@ -108,7 +109,7 @@ def get_citation_from_database() -> list[Citation]:
 
 
 def get_type_names_from_database() -> dict[str, dict[str, str]]:
-    types = defaultdict(dict)
+    types: defaultdict[Any, dict[str, str]]= defaultdict(dict)
     for table in TYPE_TABLES:
         query = f"""
                 SELECT koda, opis
@@ -123,7 +124,7 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
 
 def fetch_site_grave_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id,
             nacin_pokopa_id,
@@ -143,7 +144,7 @@ def fetch_site_grave_types() -> dict[str, list[str]]:
 
 def fetch_site_cult_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id,
             tip_id
@@ -158,7 +159,7 @@ def fetch_site_cult_types() -> dict[str, list[str]]:
 
 def fetch_site_finds_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id,
             najdba_id
@@ -173,7 +174,7 @@ def fetch_site_finds_types() -> dict[str, list[str]]:
 
 def fetch_site_topography_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id,
             topografskalega_id
@@ -188,7 +189,7 @@ def fetch_site_topography_types() -> dict[str, list[str]]:
 
 def fetch_site_settlement_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id,
             tip_id,
@@ -206,7 +207,7 @@ def fetch_site_settlement_types() -> dict[str, list[str]]:
 
 def fetch_site_other_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id
         FROM public.najdisca_ostalo;
@@ -220,7 +221,7 @@ def fetch_site_other_types() -> dict[str, list[str]]:
 
 def fetch_site_depot_types() -> dict[str, list[str]]:
     types = defaultdict(list)
-    query = f"""
+    query = """
         SELECT 
             najdisce_id,
             obmocje_id

@@ -36,7 +36,3 @@ TYPE_TABLES = [
     'lastnosti_najdisc_primarnakategorija',
     'lastnosti_najdisc_topografskalega',
     'lastnosti_najdisc_zakladnanajdbaobmocje']
-
-
-
-

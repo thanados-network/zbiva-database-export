@@ -1,6 +1,5 @@
+from collections import defaultdict
 from typing import Any
-
-from pydantic.fields import defaultdict
 
 from place import Place
 from sql import (
@@ -19,17 +18,17 @@ def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
     return countries
 
 
-def get_type_codes_for_sites() -> dict[int, list[str]]:
-    types = {}
-    types.update(fetch_site_grave_types())
-    types.update(fetch_site_settlement_types())
-    types.update(fetch_site_cult_types())
-    types.update(fetch_site_other_types())
-    types.update(fetch_site_depot_types())
+def get_type_codes_for_sites() -> dict[str, list[str]]:
+    site_types = {}
+    site_types.update(fetch_site_grave_types())
+    site_types.update(fetch_site_settlement_types())
+    site_types.update(fetch_site_cult_types())
+    site_types.update(fetch_site_other_types())
+    site_types.update(fetch_site_depot_types())
 
-    types.update(fetch_site_topography_types())
-    types.update(fetch_site_finds_types())
-    return types
+    site_types.update(fetch_site_topography_types())
+    site_types.update(fetch_site_finds_types())
+    return site_types
 
 
 if __name__ == "__main__":
@@ -46,15 +45,11 @@ if __name__ == "__main__":
 
     # Get only slovenian places
     sorted_places_by_country = sort_places_by_country(places)
-    print([i for i in sorted_places_by_country])
+
     sorted_places_by_type = defaultdict(list)
     for i in sorted_places_by_country['slovenija']:
         sorted_places_by_type[i.primary_type_id].append(i)
 
     print(len(sorted_places_by_type['NVR02']))
-
-
-
-
 
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
