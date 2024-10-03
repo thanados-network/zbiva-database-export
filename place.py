@@ -31,7 +31,8 @@ class Place:
         self.summary = data['summary']
         self.primary_type_id = data['primary_type_id']
         self.citations: list[str] = []
-        self.types: list[str] = []
+        self.zbiva_types: list[str] = []
+        self.openatlas_types: list[int] = []
 
     def __repr__(self) -> str:
         return str(self.__dict__)
@@ -49,3 +50,9 @@ class Place:
             'references': ' '.join(self.citations),
             'type_ids': [],  # todo: get types
         }
+
+    def map_types(self, types: dict[str, dict[str, Any]]):
+        for type_code in self.zbiva_types:
+            self.openatlas_types.append(types.get(type_code))
+        # todo: doesn't seem to work. duplication in list?
+        print(self.openatlas_types)

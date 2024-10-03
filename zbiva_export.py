@@ -1,6 +1,9 @@
 from collections import defaultdict
 from typing import Any
 
+from mypy.checkmember import type_object_type
+
+from api import get_type_tree_thanados
 from citation import Citation
 from literature import Literature
 from place import Place
@@ -40,16 +43,41 @@ def get_place_literature(
     place_citation_lit_ids = {c.origin_literature_id for c in cit}
     return [l for l in lit if l.id_ in place_citation_lit_ids]
 
+
+
+def get_thanados_types():
+    type_tree = get_type_tree_thanados()['typeTree']
+    result = {}
+
+    def recurse_subs(entry_id: str):
+        entry = type_tree.get(str(entry_id))
+        if not entry:
+            return
+
+        result[entry['description']] = entry['id']
+
+        subs = entry.get('subs', [])
+        for sub_id in subs:
+            recurse_subs(sub_id)
+
+    recurse_subs('237367')  # This is the OpenAtlas ID of Zbiva types
+    return result
+
+
 if __name__ == "__main__":
-    types_names = get_type_names_from_database()
+    # types_names = get_type_names_from_database()
     literature = get_literature_from_database()
-    places = get_places_from_database()
     citations = get_place_citation_from_database()
     types = get_type_codes_for_sites()
+    thanados_types = get_thanados_types()
 
+
+    places = get_places_from_database()
     for place in places:
         place.get_citations(citations)
-        place.types.extend(types[place.id_])
+        place.zbiva_types.extend(types[place.id_])
+        place.map_types(thanados_types)
+
 
     place_literature = get_place_literature(literature, citations)
     literature_csv = [lit.get_csv_data() for lit in place_literature]
@@ -62,5 +90,6 @@ if __name__ == "__main__":
         sorted_places_by_type[i.primary_type_id].append(i)
 
     print(len(sorted_places_by_type['NVR02']))
+
 
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))

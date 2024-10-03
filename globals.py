@@ -1,3 +1,5 @@
+API_URL = 'https://thanados.openatlas.eu/api/'
+
 CSV_TEMPLATE = {
     'id': '',
     'name': '',
