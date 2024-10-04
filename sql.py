@@ -52,6 +52,7 @@ def get_places_from_database() -> list[Place]:
                 posebne_najdbe as special_finds,
                 opombe as comments,
                 vir_datacije as primary_chronology,
+                dolocevalec as author_of_site,
                 zanesljivost_datacije as certainty_of_chronology,
                 datacija_opisno as chronology_description,
                 opis_najdisca as description,
@@ -121,8 +122,8 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
     return types
 
 
-def fetch_site_grave_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_grave_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id,
@@ -137,12 +138,12 @@ def fetch_site_grave_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = [row[1], row[2], row[3], row[4], row[5], row[6]]
+            types[row[0]] = {row[1], row[2], row[3], row[4], row[5], row[6]}
     return types
 
 
-def fetch_site_cult_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_cult_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id,
@@ -152,12 +153,12 @@ def fetch_site_cult_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = [row[1]]
+            types[row[0]] = {row[1]}
     return types
 
 
-def fetch_site_finds_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_finds_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id,
@@ -167,12 +168,12 @@ def fetch_site_finds_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = [row[1]]
+            types[row[0]] = {row[1]}
     return types
 
 
-def fetch_site_topography_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_topography_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id,
@@ -182,12 +183,12 @@ def fetch_site_topography_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = [row[1]]
+            types[row[0]] = {row[1]}
     return types
 
 
-def fetch_site_settlement_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_settlement_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id,
@@ -200,12 +201,12 @@ def fetch_site_settlement_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = [row[1], row[2], row[3], row[4]]
+            types[row[0]] = {row[1], row[2], row[3], row[4]}
     return types
 
 
-def fetch_site_other_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_other_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id
@@ -214,12 +215,12 @@ def fetch_site_other_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = ['OTHER']
+            types[row[0]] = {'OTHER'}
     return types
 
 
-def fetch_site_depot_types() -> dict[str, list[str]]:
-    types = defaultdict(list)
+def fetch_site_depot_types() -> dict[str, set[str]]:
+    types = defaultdict(set)
     query = """
         SELECT 
             najdisce_id,
@@ -229,5 +230,5 @@ def fetch_site_depot_types() -> dict[str, list[str]]:
     with get_cursor() as cursor:
         cursor.execute(query)
         for row in cursor.fetchall():
-            types[row[0]] = [row[1]]
+            types[row[0]] = {row[1]}
     return types

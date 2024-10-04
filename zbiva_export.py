@@ -1,19 +1,16 @@
 from collections import defaultdict
 from typing import Any
 
-from mypy.checkmember import type_object_type
-
 from api import get_type_tree_thanados
 from citation import Citation
 from literature import Literature
 from place import Place
 from sql import (
-    fetch_site_cult_types, fetch_site_finds_types, fetch_site_grave_types,
+    fetch_site_cult_types, fetch_site_depot_types,
+    fetch_site_finds_types, fetch_site_grave_types,
     fetch_site_other_types, fetch_site_settlement_types,
-    fetch_site_topography_types, fetch_site_depot_types,
-    get_place_citation_from_database,
-    get_literature_from_database,
-    get_places_from_database, get_type_names_from_database)
+    fetch_site_topography_types, get_literature_from_database,
+    get_place_citation_from_database, get_places_from_database)
 
 
 def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
@@ -23,7 +20,7 @@ def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
     return countries
 
 
-def get_type_codes_for_sites() -> dict[str, list[str]]:
+def get_type_codes_for_sites() -> dict[str, set[str]]:
     site_types = {}
     site_types.update(fetch_site_grave_types())
     site_types.update(fetch_site_settlement_types())
@@ -90,6 +87,43 @@ if __name__ == "__main__":
         sorted_places_by_type[i.primary_type_id].append(i)
 
     print(len(sorted_places_by_type['NVR02']))
+
+
+
+
+    # Get overview of some types:
+    location_precision = set()
+    plot_number = set()
+    data_quality = set()
+    archaeological_quality = set()
+    special_finds = set()
+    primary_chronology = set()
+    certainty_of_chronology = set()
+    chronology_description = set()
+    location_description = set()
+    author_of_site = set()
+    for place in sorted_places_by_country['slovenija']:
+        location_precision.add(place.location_precision)
+        plot_number.add(place.plot_number)
+        data_quality.add(place.data_quality)
+        archaeological_quality.add(place.archaeological_quality)
+        special_finds.add(place.special_finds)
+        primary_chronology.add(place.primary_chronology)
+        certainty_of_chronology.add(place.certainty_of_chronology)
+        chronology_description.add(place.chronology_description)
+        location_description.add(place.location_description)
+        author_of_site.add(place.author_of_site)
+
+    print(location_precision)
+    print(plot_number)
+    print(data_quality)
+    print(archaeological_quality)
+    print(special_finds)
+    print(primary_chronology)
+    print(certainty_of_chronology)
+    print(chronology_description)
+    print(location_description)
+    print(author_of_site)
 
 
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
