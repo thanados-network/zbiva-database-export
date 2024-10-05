@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from typing import Any, Generator
 
 import psycopg2
+from psycopg2 import extras
 
 from citation import Citation
 from globals import TYPE_TABLES
@@ -18,7 +19,7 @@ def get_cursor() -> Generator[Any, None, None]:
         password="postgres",
         host="localhost",
         port="5432")
-    cursor: Any = connection.cursor()
+    cursor: Any = connection.cursor(cursor_factory=extras.RealDictCursor)
     try:
         yield cursor
         connection.commit()
@@ -63,8 +64,7 @@ def get_places_from_database() -> list[Place]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        columns = [col[0] for col in cursor.description]
-        places = [Place(dict(zip(columns, row))) for row in cursor.fetchall()]
+        places = [Place(dict(row)) for row in cursor.fetchall()]
     return places
 
 
@@ -85,9 +85,7 @@ def get_literature_from_database() -> list[Literature]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        columns = [col[0] for col in cursor.description]
-        lit = [Literature(dict(zip(columns, row))) for row in
-               cursor.fetchall()]
+        lit = [Literature(dict(row)) for row in cursor.fetchall()]
     return lit
 
 
@@ -103,13 +101,12 @@ def get_place_citation_from_database() -> list[Citation]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        columns = [col[0] for col in cursor.description]
-        cit = [Citation(dict(zip(columns, row))) for row in cursor.fetchall()]
+        cit = [Citation(dict(row)) for row in cursor.fetchall()]
     return cit
 
 
 def get_type_names_from_database() -> dict[str, dict[str, str]]:
-    types: defaultdict[Any, dict[str, str]]= defaultdict(dict)
+    types: defaultdict[Any, dict[str, str]] = defaultdict(dict)
     for table in TYPE_TABLES:
         query = f"""
                 SELECT koda, opis
@@ -118,7 +115,8 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
         with get_cursor() as cursor:
             cursor.execute(query)
             for row in cursor.fetchall():
-                types[table.replace('lastnosti_najdisc_', '')][row[0]] = row[1]
+                types[table.replace('lastnosti_najdisc_', '')][row['koda']] = \
+                row['opis']
     return types
 
 
@@ -137,8 +135,15 @@ def fetch_site_grave_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {row[1], row[2], row[3], row[4], row[5], row[6]}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {
+                row['nacin_pokopa_id'],
+                row['oddaljenost_id'],
+                row['prostor_id'],
+                row['tip_id'],
+                row['usmerjenost_pobocja_id'],
+                row['velikost_id']}
     return types
 
 
@@ -152,8 +157,9 @@ def fetch_site_cult_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {row[1]}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {row['tip_id']}
     return types
 
 
@@ -167,8 +173,9 @@ def fetch_site_finds_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {row[1]}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {row['najdba_id']}
     return types
 
 
@@ -182,8 +189,9 @@ def fetch_site_topography_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {row[1]}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {row['topografskalega_id']}
     return types
 
 
@@ -200,8 +208,13 @@ def fetch_site_settlement_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {row[1], row[2], row[3], row[4]}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {
+                row['tip_id'],
+                row['utrjenost_id'],
+                row['velikost_id'],
+                row['vrste_sledov_id']}
     return types
 
 
@@ -214,8 +227,9 @@ def fetch_site_other_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {'OTHER'}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {'OTHER'}
     return types
 
 
@@ -229,6 +243,7 @@ def fetch_site_depot_types() -> dict[str, set[str]]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        for row in cursor.fetchall():
-            types[row[0]] = {row[1]}
+        result = [dict(row) for row in cursor.fetchall()]
+        for row in result:
+            types[row['najdisce_id']] = {row['obmocje_id']}
     return types
