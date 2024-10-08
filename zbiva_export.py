@@ -44,6 +44,16 @@ def get_thanados_types():
     recurse_subs('237367')  # This is the OpenAtlas ID of Zbiva types
     return result
 
+def get_admin_hierarchy() -> dict[str, Any]:
+    hierarchy = defaultdict(
+        lambda: defaultdict(
+            lambda: defaultdict(
+                lambda: defaultdict(set))))
+
+    for p in places:
+        hierarchy[p.admin_state2][p.admin_state][p.admin_district][p.admin_unit].add(p.admin_settlement)
+
+    return hierarchy
 
 if __name__ == "__main__":
     # types_names = get_type_names_from_database()
@@ -57,6 +67,8 @@ if __name__ == "__main__":
         place.get_citations(citations)
         place.map_types(thanados_types)
 
+    admin_hierarchy = get_admin_hierarchy()
+
 
     place_literature = get_place_literature(literature, citations)
     literature_csv = [lit.get_csv_data() for lit in place_literature]
@@ -67,6 +79,7 @@ if __name__ == "__main__":
     sorted_places_by_type = defaultdict(list)
     for i in sorted_places_by_country['slovenija']:
         sorted_places_by_type[i.primary_type_id].append(i)
+
 
     print(len(sorted_places_by_type['NVR02']))
 
@@ -86,17 +99,17 @@ def test_which_other_types_exist():
     chronology_description = set()
     location_description = set()
     author_of_site = set()
-    for place in sorted_places_by_country['slovenija']:
-        location_precision.add(place.location_precision)
-        plot_number.add(place.plot_number)
-        data_quality.add(place.data_quality)
-        archaeological_quality.add(place.archaeological_quality)
-        special_finds.add(place.special_finds)
-        primary_chronology.add(place.primary_chronology)
-        certainty_of_chronology.add(place.certainty_of_chronology)
-        chronology_description.add(place.chronology_description)
-        location_description.add(place.location_description)
-        author_of_site.add(place.author_of_site)
+    for place_ in sorted_places_by_country['slovenija']:
+        location_precision.add(place_.location_precision)
+        plot_number.add(place_.plot_number)
+        data_quality.add(place_.data_quality)
+        archaeological_quality.add(place_.archaeological_quality)
+        special_finds.add(place_.special_finds)
+        primary_chronology.add(place_.primary_chronology)
+        certainty_of_chronology.add(place_.certainty_of_chronology)
+        chronology_description.add(place_.chronology_description)
+        location_description.add(place_.location_description)
+        author_of_site.add(place_.author_of_site)
 
     print(location_precision)
     print(plot_number)
