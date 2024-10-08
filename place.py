@@ -4,7 +4,7 @@ from citation import Citation
 
 
 class Place:
-    def __init__(self, data: dict[str, str]):
+    def __init__(self, data: dict[str, Any]):
         self.id_ = data['id']
         self.begin = data['begin']
         self.end = data['end']
@@ -32,7 +32,7 @@ class Place:
         self.summary = data['summary']
         self.primary_type_id = data['primary_type_id']
         self.citations: list[str] = []
-        self.zbiva_types: list[str] = []
+        self.site_types: list[str] = data['site_types']
         self.openatlas_types: list[str] = []
 
     def __repr__(self) -> str:
@@ -53,5 +53,5 @@ class Place:
         }
 
     def map_types(self, types: dict[str, int]):
-        for type_code in self.zbiva_types:
+        for type_code in self.site_types:
             self.openatlas_types.append(str(types.get(type_code)))

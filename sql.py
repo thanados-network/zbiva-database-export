@@ -33,35 +33,68 @@ def get_cursor() -> Generator[Any, None, None]:
 
 def get_places_from_database() -> list[Place]:
     query = """
-            SELECT 
-                id as id,
-                najprej as begin, 
-                najkasneje as "end",
-                ime as name,
-                naselje as admin_settlement,
-                topografska_enota as admin_unit,
-                topografsko_podrocje as admin_district,
-                dezela as admin_state,
-                drzava as admin_state2,
-                leto_prve_objave as first_publication,
-                natancnost_lokacije as location_precision,
-                koordinate as coordinate,
-                opis_lokacije as location_description,
-                parcelna_stevilka as plot_number,
-                kakovost_podatkov as data_quality,
-                zanesljivost_podatkov as archaeological_quality,
-                posebne_najdbe as special_finds,
-                opombe as comments,
-                vir_datacije as primary_chronology,
-                dolocevalec as author_of_site,
-                zanesljivost_datacije as certainty_of_chronology,
-                datacija_opisno as chronology_description,
-                opis_najdisca as description,
-                razno as description_2,
-                povzetek as summary,
-                primarna_kategorija_id as primary_type_id
-            FROM public.najdisca_najdisce 
-            """
+        SELECT 
+            n.id as id,
+            n.najprej as begin, 
+            n.najkasneje as "end",
+            n.ime as name,
+            n.naselje as admin_settlement,
+            n.topografska_enota as admin_unit,
+            n.topografsko_podrocje as admin_district,
+            n.dezela as admin_state,
+            n.drzava as admin_state2,
+            n.leto_prve_objave as first_publication,
+            n.natancnost_lokacije as location_precision,
+            n.koordinate as coordinate,
+            n.opis_lokacije as location_description,
+            n.parcelna_stevilka as plot_number,
+            n.kakovost_podatkov as data_quality,
+            n.zanesljivost_podatkov as archaeological_quality,
+            n.posebne_najdbe as special_finds,
+            n.opombe as comments,
+            n.vir_datacije as primary_chronology,
+            n.dolocevalec as author_of_site,
+            n.zanesljivost_datacije as certainty_of_chronology,
+            n.datacija_opisno as chronology_description,
+            n.opis_najdisca as description,
+            n.razno as description_2,
+            n.povzetek as summary,
+            n.primarna_kategorija_id as primary_type_id,
+            
+            ARRAY_REMOVE(
+                ARRAY_CAT(
+                    ARRAY[
+                        zak.obmocje_id,
+                        nasel.tip_id,
+                        nasel.utrjenost_id,
+                        nasel.velikost_id,
+                        nasel.vrste_sledov_id,
+                        kult.tip_id,
+                        grob.nacin_pokopa_id,
+                        grob.oddaljenost_id,
+                        grob.prostor_id,
+                        grob.tip_id,
+                        grob.usmerjenost_pobocja_id,
+                        grob.velikost_id
+                    ],
+                    ARRAY_CAT(
+                        ARRAY_AGG(DISTINCT topo.topografskalega_id),
+                        ARRAY_AGG(DISTINCT najbe.najdba_id)
+                    )
+                ), NULL
+            ) AS site_types
+        FROM public.najdisca_najdisce n
+        LEFT JOIN public.najdisca_zakladnanajdba zak ON zak.najdisce_id = n.id
+        LEFT JOIN public.najdisca_naselbina nasel ON nasel.najdisce_id = n.id
+        LEFT JOIN public.najdisca_najdisce_topografske_lege topo ON topo.najdisce_id = n.id
+        LEFT JOIN public.najdisca_najdisce_najdbe najbe ON najbe.najdisce_id = n.id
+        LEFT JOIN public.najdisca_kultniprostor kult ON kult.najdisce_id = n.id
+        LEFT JOIN public.najdisca_grobisce grob ON grob.najdisce_id = n.id
+        GROUP BY n.id, zak.obmocje_id, nasel.tip_id, nasel.utrjenost_id, 
+        nasel.velikost_id, nasel.vrste_sledov_id, kult.tip_id, 
+        grob.nacin_pokopa_id, grob.oddaljenost_id, grob.prostor_id, 
+        grob.tip_id, grob.usmerjenost_pobocja_id, grob.velikost_id;
+        """
     with get_cursor() as cursor:
         cursor.execute(query)
         places = [Place(dict(row)) for row in cursor.fetchall()]
@@ -120,130 +153,12 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
     return types
 
 
-def fetch_site_grave_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id,
-            nacin_pokopa_id,
-            oddaljenost_id,
-            prostor_id,
-            tip_id,
-            usmerjenost_pobocja_id,
-            velikost_id 
-        FROM public.najdisca_grobisce;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {
-                row['nacin_pokopa_id'],
-                row['oddaljenost_id'],
-                row['prostor_id'],
-                row['tip_id'],
-                row['usmerjenost_pobocja_id'],
-                row['velikost_id']}
-    return types
 
 
-def fetch_site_cult_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id,
-            tip_id
-        FROM public.najdisca_kultniprostor;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {row['tip_id']}
-    return types
 
 
-def fetch_site_finds_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id,
-            najdba_id
-        FROM public.najdisca_najdisce_najdbe;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {row['najdba_id']}
-    return types
 
 
-def fetch_site_topography_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id,
-            topografskalega_id
-        FROM public.najdisca_najdisce_topografske_lege;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {row['topografskalega_id']}
-    return types
 
 
-def fetch_site_settlement_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id,
-            tip_id,
-            utrjenost_id,
-            velikost_id,
-            vrste_sledov_id
-        FROM public.najdisca_naselbina;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {
-                row['tip_id'],
-                row['utrjenost_id'],
-                row['velikost_id'],
-                row['vrste_sledov_id']}
-    return types
 
-
-def fetch_site_other_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id
-        FROM public.najdisca_ostalo;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {'OTHER'}
-    return types
-
-
-def fetch_site_depot_types() -> dict[str, set[str]]:
-    types = defaultdict(set)
-    query = """
-        SELECT 
-            najdisce_id,
-            obmocje_id
-        FROM public.najdisca_zakladnanajdba;
-        """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        result = [dict(row) for row in cursor.fetchall()]
-        for row in result:
-            types[row['najdisce_id']] = {row['obmocje_id']}
-    return types
