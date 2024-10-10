@@ -40,9 +40,9 @@ def get_places_from_database() -> list[Place]:
             n.ime as name,
             n.naselje as admin_settlement,
             n.topografska_enota as admin_unit,
-            n.topografsko_podrocje as admin_district,
-            n.dezela as admin_state,
-            n.drzava as admin_state2,
+            n.topografsko_podrocje as admin_area,
+            n.dezela as admin_region,
+            n.drzava as admin_country,
             n.leto_prve_objave as first_publication,
             n.natancnost_lokacije as location_precision,
             n.koordinate as coordinate,
@@ -151,14 +151,3 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
                 types[table.replace('lastnosti_najdisc_', '')][row['koda']] = \
                 row['opis']
     return types
-
-
-
-
-
-
-
-
-
-
-

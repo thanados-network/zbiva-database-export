@@ -13,9 +13,8 @@ from sql import (
 def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
     countries = defaultdict(list)
     for place_ in places_:
-        countries[place_.admin_state2].append(place_)
+        countries[place_.admin_country].append(place_)
     return countries
-
 
 
 def get_place_literature(
@@ -25,12 +24,11 @@ def get_place_literature(
     return [l for l in lit if l.id_ in place_citation_lit_ids]
 
 
-
-def get_thanados_types():
+def get_thanados_types() -> dict[str, int]:
     type_tree = get_type_tree_thanados()['typeTree']
     result = {}
 
-    def recurse_subs(entry_id: str):
+    def recurse_subs(entry_id: str) -> None:
         entry = type_tree.get(str(entry_id))
         if not entry:
             return
@@ -42,7 +40,9 @@ def get_thanados_types():
             recurse_subs(sub_id)
 
     recurse_subs('237367')  # This is the OpenAtlas ID of Zbiva types
+    del result[None]
     return result
+
 
 def get_admin_hierarchy() -> dict[str, Any]:
     hierarchy = defaultdict(
@@ -51,9 +51,11 @@ def get_admin_hierarchy() -> dict[str, Any]:
                 lambda: defaultdict(set))))
 
     for p in places:
-        hierarchy[p.admin_state2][p.admin_state][p.admin_district][p.admin_unit].add(p.admin_settlement)
+        hierarchy[p.admin_country][p.admin_region][p.admin_area][
+            p.admin_unit].add(p.admin_settlement)
 
     return hierarchy
+
 
 if __name__ == "__main__":
     # types_names = get_type_names_from_database()
@@ -61,14 +63,12 @@ if __name__ == "__main__":
     citations = get_place_citation_from_database()
     thanados_types = get_thanados_types()
 
-
     places = get_places_from_database()
     for place in places:
         place.get_citations(citations)
         place.map_types(thanados_types)
 
     admin_hierarchy = get_admin_hierarchy()
-
 
     place_literature = get_place_literature(literature, citations)
     literature_csv = [lit.get_csv_data() for lit in place_literature]
@@ -78,16 +78,15 @@ if __name__ == "__main__":
 
     sorted_places_by_type = defaultdict(list)
     for i in sorted_places_by_country['slovenija']:
+        print(i.site_types)
         sorted_places_by_type[i.primary_type_id].append(i)
 
-
     print(len(sorted_places_by_type['NVR02']))
-
 
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
 
 
-def test_which_other_types_exist():
+def test_which_other_types_exist() -> None:
     # Get overview of some types:
     location_precision = set()
     plot_number = set()
