@@ -3,8 +3,6 @@ from typing import Any
 from citation import Citation
 
 
-
-
 class Place:
     def __init__(self, data: dict[str, Any]):
         self.id_ = data['id']
@@ -45,7 +43,7 @@ class Place:
         if loc := self.location_precision:
             types.append(f"lokacije_{loc}")
         if chrono := self.certainty_of_chronology:
-            types.append( f"datacije_{chrono}")
+            types.append(f"datacije_{chrono}")
         if prime := self.primary_chronology:
             types.append(prime)
         if archeological := self.archaeological_quality:

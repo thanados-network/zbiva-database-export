@@ -78,7 +78,6 @@ if __name__ == "__main__":
 
     sorted_places_by_type = defaultdict(list)
     for i in sorted_places_by_country['slovenija']:
-        print(i.site_types)
         sorted_places_by_type[i.primary_type_id].append(i)
 
     print(len(sorted_places_by_type['NVR02']))
