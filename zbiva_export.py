@@ -1,5 +1,8 @@
 from collections import defaultdict
+from pprint import pprint
 from typing import Any
+
+import pandas as pd
 
 from api import get_type_tree_thanados
 from citation import Citation
@@ -56,6 +59,10 @@ def get_admin_hierarchy() -> dict[str, Any]:
 
     return hierarchy
 
+def default_to_regular(d: defaultdict[str, Any]) -> dict[str, dict[str, Any]]:
+    if isinstance(d, defaultdict):
+        d = {k: default_to_regular(v) for k, v in d.items()}
+    return d
 
 if __name__ == "__main__":
     # types_names = get_type_names_from_database()
@@ -69,6 +76,7 @@ if __name__ == "__main__":
         place.map_types(thanados_types)
 
     admin_hierarchy = get_admin_hierarchy()
+    #print(default_to_regular(admin_hierarchy['slovenija'][None]))
 
     place_literature = get_place_literature(literature, citations)
     literature_csv = [lit.get_csv_data() for lit in place_literature]
@@ -76,12 +84,19 @@ if __name__ == "__main__":
     # Get only slovenian places
     sorted_places_by_country = sort_places_by_country(places)
 
+    place_csv_dict = []
     sorted_places_by_type = defaultdict(list)
     for i in sorted_places_by_country['slovenija']:
         sorted_places_by_type[i.primary_type_id].append(i)
+        place_csv_dict.append(i.get_csv_data())
 
-    print(len(sorted_places_by_type['NVR02']))
+    df = pd.DataFrame(place_csv_dict)
+    df.to_csv('csv/places.csv', index=False)
 
+    lit_csv_dict = [l.get_csv_data() for l in literature]
+    df = pd.DataFrame(lit_csv_dict)
+    df.to_csv('csv/literature.csv', index=False)
+    # print(len(sorted_places_by_type['NVR02']))
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
 
 

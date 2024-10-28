@@ -45,7 +45,7 @@ def get_places_from_database() -> list[Place]:
             n.drzava as admin_country,
             n.leto_prve_objave as first_publication,
             n.natancnost_lokacije as location_precision,
-            n.koordinate as coordinate,
+            ST_AsText(n.koordinate) as coordinate,
             n.opis_lokacije as location_description,
             n.parcelna_stevilka as plot_number,
             n.kakovost_podatkov as data_quality,

@@ -60,12 +60,17 @@ class Place:
     def get_csv_data(self) -> dict[str, Any]:
         return {
             'id': self.id_,
-            'name': self.name,
-            'description': self.description,
-            'references': ' '.join(self.citations),
+            'name': self.name or '',
+            'description': f"{self.description}" if self.description else '',
             'type_ids': ' '.join(self.openatlas_types),
+            'wkt': f"{self.coordinate}" or '',
+            'begin_from': f'{self.begin}-01-01' if self.begin else '',
+            'begin_to': f'{self.begin}-12-31' if self.begin else '',
+            'end_from': f'{self.end}-01-01' if self.end else '',
+            'end_to': f'{self.end}-12-31' if self.end else '',
+            'references': f"{' '.join(self.citations)}",
         }
 
     def map_types(self, types: dict[str, int]) -> None:
-        for type_code in self.site_types:
+        for type_code in self.site_types + [self.primary_type_id]:
             self.openatlas_types.append(str(types.get(type_code)))

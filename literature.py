@@ -22,12 +22,13 @@ class Literature:
 
     def get_csv_data(self) -> dict[str, Any]:
         return {
-            'id': self.id_,
+            'id': f'literature_{self.id_}',
             'name': self.name,
             'type_ids': self.type_ids,
             'description': self.description}
 
     # Get name, problem is, if no Autor | publication | title exist
+    # And if first word is e.g. (ed.) etc.
     def get_name(self) -> str:
         if self.autor:
             name = f"{self.autor.split(' ')[0]} {self.date}"
