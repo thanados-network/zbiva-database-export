@@ -78,8 +78,6 @@ if __name__ == "__main__":
     admin_hierarchy = get_admin_hierarchy()
     #print(default_to_regular(admin_hierarchy['slovenija'][None]))
 
-    place_literature = get_place_literature(literature, citations)
-    literature_csv = [lit.get_csv_data() for lit in place_literature]
 
     # Get only slovenian places
     sorted_places_by_country = sort_places_by_country(places)
@@ -93,7 +91,8 @@ if __name__ == "__main__":
     df = pd.DataFrame(place_csv_dict)
     df.to_csv('csv/places.csv', index=False)
 
-    lit_csv_dict = [l.get_csv_data() for l in literature]
+    place_literature = get_place_literature(literature, citations)
+    lit_csv_dict = [lit.get_csv_data() for lit in place_literature]
     df = pd.DataFrame(lit_csv_dict)
     df.to_csv('csv/literature.csv', index=False)
     # print(len(sorted_places_by_type['NVR02']))

@@ -13,5 +13,6 @@ class Citation:
         return self.pages.replace(' ', '')
 
     def get_csv_data(self) -> str:
-        pages = self.pages.replace(' ', '') if self.pages else ''
+        pages = self.pages.replace(' ',      '').replace(';', ':') \
+            if self.pages else ''
         return f"literature_{self.origin_literature_id};{pages}"

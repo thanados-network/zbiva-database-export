@@ -8,7 +8,7 @@ class Place:
         self.id_ = data['id']
         self.begin = data['begin']
         self.end = data['end']
-        self.name = data['name']
+        self.name = data['name'] or 'Unknown'
         self.admin_settlement = data['admin_settlement']
         self.admin_unit = data['admin_unit']
         self.admin_area = data['admin_area']
@@ -63,12 +63,12 @@ class Place:
             'name': self.name or '',
             'description': f"{self.description}" if self.description else '',
             'type_ids': ' '.join(self.openatlas_types),
-            'wkt': f"{self.coordinate}" or '',
+            'wkt': f"{self.coordinate}" if self.coordinate else '',
             'begin_from': f'{self.begin}-01-01' if self.begin else '',
             'begin_to': f'{self.begin}-12-31' if self.begin else '',
             'end_from': f'{self.end}-01-01' if self.end else '',
             'end_to': f'{self.end}-12-31' if self.end else '',
-            'references': f"{' '.join(self.citations)}",
+            'origin_reference_ids': f"{' '.join(self.citations)}",
         }
 
     def map_types(self, types: dict[str, int]) -> None:
