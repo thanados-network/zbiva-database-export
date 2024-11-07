@@ -33,7 +33,7 @@ class Place:
         self.primary_type_id = data['primary_type_id']
         self.citations: list[str] = []
         self.site_types: list[str] = self.get_all_site_types(data)
-        self.openatlas_types: list[str] = []
+        self.openatlas_types: list[str] = ['239450']
 
     def __repr__(self) -> str:
         return str(self.__dict__)
