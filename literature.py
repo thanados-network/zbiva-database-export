@@ -1,6 +1,10 @@
 from typing import Any
 
 
+def sanitize_name(name: str) -> str:
+    return name.replace(')', '').replace('(', '')
+
+
 class Literature:
     def __init__(self, data: dict[str, Any]) -> None:
         self.id_ = data.get('id')
@@ -38,6 +42,7 @@ class Literature:
             name = f"{self.title.split(' ')[0]} {self.date}"
         else:
             name = f"Unknown {self.date}"
+
         return name
 
     def get_description(self) -> str:
