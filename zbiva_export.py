@@ -91,6 +91,7 @@ if __name__ == "__main__":
     df.to_csv('csv/places.csv', index=False)
 
     place_literature = get_place_literature(literature, citations)
+
     lit_csv_dict = [lit.get_csv_data() for lit in place_literature]
     df = pd.DataFrame(lit_csv_dict)
     df.to_csv('csv/literature.csv', index=False)

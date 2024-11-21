@@ -34,16 +34,19 @@ class Literature:
     # Get name, problem is, if no Autor | publication | title exist
     # And if first word is e.g. (ed.) etc.
     def get_name(self) -> str:
+        date = self.date or 'Unknown'
         if self.autor:
-            name = f"{self.autor.split(' ')[0]} {self.date}"
+            autor = self.autor.replace('(ed.)', '').replace(',', '').strip()
+            name = f"{autor.split(' ')[0]} {date}"
         elif self.publication:
-            name = f"{self.publication.split(' ')[0]} {self.date}"
-        elif self.title:
-            name = f"{self.title.split(' ')[0]} {self.date}"
-        else:
-            name = f"Unknown {self.date}"
 
-        return name
+            name = f"{self.publication.split(' ')[0]} {date}"
+        elif self.title:
+            name = f"{self.title.split(' ')[0]} {date}"
+        else:
+            name = f"Unknown {date}"
+
+        return name.replace('(', '').replace(')', '').strip()
 
     def get_description(self) -> str:
         def get_autor() -> str:
@@ -55,13 +58,15 @@ class Literature:
         def get_title() -> str:
             title = ''
             if self.title:
-                title = self.title
+                title = f"{self.title}."
             return title.replace('\n', '').strip()
 
         def get_publication() -> str:
             publication = ''
-            if self.publication:
-                publication = f'. In: {self.publication}'
+            if self.publication and self.autor:
+                publication = f' In: {self.publication}'
+            elif self.publication:
+                publication = self.publication
             return publication.replace('\n', '').strip()
 
         def get_location_date() -> str:
