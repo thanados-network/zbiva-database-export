@@ -1,6 +1,6 @@
 from typing import Any
 
-from citation import Citation
+from model.citation import Citation
 
 
 class Place:

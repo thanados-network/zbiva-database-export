@@ -4,9 +4,11 @@ from typing import Any
 import pandas as pd
 
 from api import get_type_tree_thanados
-from citation import Citation
-from literature import Literature
-from place import Place
+from model.citation import Citation
+from model.literature import Literature
+from model.place import Place
+
+from database.grave import get_graves_from_database
 from database.site import (
     get_literature_from_database,
     get_place_citation_from_database, get_places_from_database)
@@ -98,6 +100,8 @@ if __name__ == "__main__":
     # print(len(sorted_places_by_type['NVR02']))
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
 
+    graves = get_graves_from_database()
+    print(graves)
 
 def test_which_other_types_exist() -> None:
     # Get overview of some types:

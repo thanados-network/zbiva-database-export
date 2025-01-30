@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Any
 
-from citation import Citation
+from model.citation import Citation
 from config import get_cursor
 from globals import TYPE_TABLES
-from literature import Literature
-from place import Place
+from model.literature import Literature
+from model.place import Place
 
 
 def get_places_from_database() -> list[Place]:
@@ -63,8 +63,10 @@ def get_places_from_database() -> list[Place]:
         FROM public.najdisca_najdisce n
         LEFT JOIN public.najdisca_zakladnanajdba zak ON zak.najdisce_id = n.id
         LEFT JOIN public.najdisca_naselbina nasel ON nasel.najdisce_id = n.id
-        LEFT JOIN public.najdisca_najdisce_topografske_lege topo ON topo.najdisce_id = n.id
-        LEFT JOIN public.najdisca_najdisce_najdbe najbe ON najbe.najdisce_id = n.id
+        LEFT JOIN public.najdisca_najdisce_topografske_lege topo ON 
+        topo.najdisce_id = n.id
+        LEFT JOIN public.najdisca_najdisce_najdbe najbe ON najbe.najdisce_id 
+        = n.id
         LEFT JOIN public.najdisca_kultniprostor kult ON kult.najdisce_id = n.id
         LEFT JOIN public.najdisca_grobisce grob ON grob.najdisce_id = n.id
         GROUP BY n.id, zak.obmocje_id, nasel.tip_id, nasel.utrjenost_id, 
@@ -126,5 +128,5 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
             cursor.execute(query)
             for row in cursor.fetchall():
                 types[table.replace('lastnosti_najdisc_', '')][row['koda']] = \
-                row['opis']
+                    row['opis']
     return types
