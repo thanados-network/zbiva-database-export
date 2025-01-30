@@ -18,8 +18,6 @@ def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
         countries[place_.admin_country].append(place_)
     return countries
 
-def test():
-    pass
 
 def get_place_literature(
         lit: list[Literature],
