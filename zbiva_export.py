@@ -10,8 +10,8 @@ from model.place import Place
 
 from database.grave import get_graves_from_database
 from database.site import (
-    get_literature_from_database,
     get_place_citation_from_database, get_places_from_database)
+from database.literature import get_literature_from_database
 
 
 def sort_places_by_country(places_: list[Place]) -> dict[str, Any]:
@@ -101,7 +101,8 @@ if __name__ == "__main__":
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
 
     graves = get_graves_from_database()
-    print(graves)
+    for grave in graves:
+        grave.get_citations(citations)
 
 def test_which_other_types_exist() -> None:
     # Get overview of some types:

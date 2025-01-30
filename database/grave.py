@@ -1,4 +1,5 @@
 from config import get_cursor
+from model.citation import Citation
 from model.grave import Grave
 
 
@@ -33,3 +34,19 @@ def get_graves_from_database() -> list[Grave]:
         cursor.execute(query)
         places = [Grave(dict(row)) for row in cursor.fetchall()]
     return places
+
+
+def get_place_citation_from_database() -> list[Citation]:
+    query = """
+            SELECT
+                id, 
+                citat AS pages,
+                opomba AS description, 
+                clanek_id AS literature_id,
+                najdisce_id AS place_id
+            FROM ppublic.grobovi_grobliteratura
+            """
+    with get_cursor() as cursor:
+        cursor.execute(query)
+        cit = [Citation(dict(row)) for row in cursor.fetchall()]
+    return cit
