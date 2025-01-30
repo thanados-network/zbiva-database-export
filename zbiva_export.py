@@ -7,7 +7,7 @@ from api import get_type_tree_thanados
 from citation import Citation
 from literature import Literature
 from place import Place
-from sql import (
+from database.site import (
     get_literature_from_database,
     get_place_citation_from_database, get_places_from_database)
 

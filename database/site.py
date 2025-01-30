@@ -1,34 +1,11 @@
 from collections import defaultdict
-from contextlib import contextmanager
-from typing import Any, Generator
-
-import psycopg2
-from psycopg2 import extras
+from typing import Any
 
 from citation import Citation
+from config import get_cursor
 from globals import TYPE_TABLES
 from literature import Literature
 from place import Place
-
-
-@contextmanager
-def get_cursor() -> Generator[Any, None, None]:
-    connection = psycopg2.connect(
-        dbname="zbiva",
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port="5432")
-    cursor: Any = connection.cursor(cursor_factory=extras.RealDictCursor)
-    try:
-        yield cursor
-        connection.commit()
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        cursor.close()
-        connection.close()
 
 
 def get_places_from_database() -> list[Place]:
