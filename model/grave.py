@@ -56,5 +56,8 @@ class Grave:
 
 
     def map_types(self, types: dict[str, int]) -> None:
-        for type_code in self.grave_types + [self.primary_type_id]:
+        own_types = self.grave_types
+        if self.primary_type_id:
+            own_types += [self.primary_type_id]
+        for type_code in own_types:
             self.openatlas_types.append(str(types.get(type_code)))
