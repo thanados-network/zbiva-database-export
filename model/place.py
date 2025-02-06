@@ -54,7 +54,7 @@ class Place:
 
     def get_citations(self, citations: list[Citation]) -> None:
         for citation in citations:
-            if citation.place_id == self.id_:
+            if citation.linked_id == self.id_:
                 self.citations.append(citation.get_csv_data())
 
     def get_csv_data(self) -> dict[str, Any]:
@@ -69,6 +69,7 @@ class Place:
             'end_from': f'{self.end}-01-01' if self.end else '',
             'end_to': f'{self.end}-12-31' if self.end else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
+            'parent_id': '',
             'openatlas_class': 'Place'
         }
 

@@ -22,7 +22,7 @@ CSV_TEMPLATE = {
     'parent_id': '',
     'openatlas_parent_id': ''}
 
-TYPE_TABLES = [
+SITE_TYPE_TABLES = [
     'lastnosti_najdisc_grobisceoddaljenost',
     'lastnosti_najdisc_grobiscepokop',
     'lastnosti_najdisc_grobisceprostor',
@@ -38,3 +38,9 @@ TYPE_TABLES = [
     'lastnosti_najdisc_primarnakategorija',
     'lastnosti_najdisc_topografskalega',
     'lastnosti_najdisc_zakladnanajdbaobmocje']
+
+GRAVE_TYPE_TABLES = [
+    'lastnosti_grobov_gradba',
+    'lastnosti_grobov_vrsta',
+    'lastnosti_grobov_zasutje',
+    'lastnosti_grobov_zunanjiznaki']

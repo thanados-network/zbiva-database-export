@@ -2,9 +2,9 @@ class Citation:
     def __init__(self, data: dict[str, str]) -> None:
         self.id_ = data["id"]
         self.pages = data['pages']
-        self.description = data['description']
+        self.description = data.get('description')
         self.origin_literature_id = data['literature_id']
-        self.place_id = data['place_id']
+        self.linked_id = data['linked_id']
 
     def __repr__(self) -> str:
         return str(self.__dict__)

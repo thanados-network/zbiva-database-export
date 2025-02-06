@@ -25,15 +25,17 @@ class Grave:
         self.coffin_width = data.get("coffin_width")
         self.notes = data.get("notes")
         self.site_id = data.get("site_id")
-        self.type_id = data.get("type_id")
+        self.primary_type_id = data.get("type_id")
         self.citations: list[str] = []
+        self.grave_types: list[str] = data['grave_types']
+        self.openatlas_types: list[str] = ['239450']
 
     def __repr__(self) -> str:
         return str(self.__dict__)
 
     def get_citations(self, citations: list[Citation]) -> None:
         for citation in citations:
-            if citation.place_id == self.id_:
+            if citation.linked_id == self.id_:
                 self.citations.append(citation.get_csv_data())
 
     def get_csv_data(self) -> dict[str, Any]:
@@ -41,7 +43,7 @@ class Grave:
             'id': self.id_,
             'name': self.grave_label or '',
             'description': '',
-            # 'type_ids': ' '.join(self.openatlas_types),
+            'type_ids': ' '.join(self.openatlas_types),
             'wkt': f"{self.coordinates}" if self.coordinates else '',
             'begin_from': f'{self.earliest}-01-01' if self.earliest else '',
             'begin_to': f'{self.earliest}-12-31' if self.earliest else '',
@@ -51,3 +53,8 @@ class Grave:
             'parent_id': self.site_id,
             'openatlas_class': 'Feature'
         }
+
+
+    def map_types(self, types: dict[str, int]) -> None:
+        for type_code in self.grave_types + [self.primary_type_id]:
+            self.openatlas_types.append(str(types.get(type_code)))

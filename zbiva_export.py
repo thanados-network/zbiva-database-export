@@ -8,7 +8,8 @@ from model.citation import Citation
 from model.literature import Literature
 from model.place import Place
 
-from database.grave import get_graves_from_database
+from database.grave import get_grave_citation_from_database, \
+    get_graves_from_database
 from database.site import (
     get_place_citation_from_database, get_places_from_database)
 from database.literature import get_literature_from_database
@@ -68,12 +69,12 @@ def default_to_regular(d: defaultdict[str, Any]) -> dict[str, dict[str, Any]]:
 if __name__ == "__main__":
     # types_names = get_type_names_from_database()
     literature = get_literature_from_database()
-    citations = get_place_citation_from_database()
+    place_citations = get_place_citation_from_database()
     thanados_types = get_thanados_types()
 
     places = get_places_from_database()
     for place in places:
-        place.get_citations(citations)
+        place.get_citations(place_citations)
         place.map_types(thanados_types)
 
     admin_hierarchy = get_admin_hierarchy()
@@ -89,20 +90,40 @@ if __name__ == "__main__":
         sorted_places_by_type[i.primary_type_id].append(i)
         place_csv_dict.append(i.get_csv_data())
 
-    df = pd.DataFrame(place_csv_dict)
-    df.to_csv('csv/places.csv', index=False)
+    sites_df = pd.DataFrame(place_csv_dict)
+    sites_df.to_csv('csv/sites.csv', index=False)
 
-    place_literature = get_place_literature(literature, citations)
+    #place_literature = get_place_literature(literature, citations)
 
-    lit_csv_dict = [lit.get_csv_data() for lit in place_literature]
-    df = pd.DataFrame(lit_csv_dict)
-    df.to_csv('csv/literature.csv', index=False)
+    lit_csv_dict = [lit.get_csv_data() for lit in literature]
+    lit_df = pd.DataFrame(lit_csv_dict)
+    lit_df.to_csv('csv/literature.csv', index=False)
     # print(len(sorted_places_by_type['NVR02']))
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
 
+
+    slovenia_place_ids = [i.id_ for i in sorted_places_by_country['slovenija']]
+    grave_citations = get_grave_citation_from_database()
     graves = get_graves_from_database()
     for grave in graves:
-        grave.get_citations(citations)
+        grave.get_citations(grave_citations)
+        grave.map_types(thanados_types)
+
+    grave_csv_dict = []
+    for grave in graves:
+        if grave.site_id in slovenia_place_ids:
+            grave_csv_dict.append(grave.get_csv_data())
+
+    grave_df = pd.DataFrame(grave_csv_dict)
+    grave_df.to_csv('csv/graves.csv', index=False)
+
+
+    place_df = sites_df.append(grave_df, ignore_index=True)
+    place_df.to_csv('csv/places.csv', index=False)
+
+
+
+
 
 def test_which_other_types_exist() -> None:
     # Get overview of some types:

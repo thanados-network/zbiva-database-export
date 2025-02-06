@@ -3,7 +3,7 @@ from typing import Any
 
 from model.citation import Citation
 from config import get_cursor
-from globals import TYPE_TABLES
+from globals import SITE_TYPE_TABLES
 from model.place import Place
 
 
@@ -86,7 +86,7 @@ def get_place_citation_from_database() -> list[Citation]:
                 citat AS pages,
                 opomba AS description, 
                 clanek_id AS literature_id,
-                najdisce_id AS place_id
+                najdisce_id AS linked_id
             FROM public.najdisca_najdisceliteratura
             """
     with get_cursor() as cursor:
@@ -95,9 +95,9 @@ def get_place_citation_from_database() -> list[Citation]:
     return cit
 
 
-def get_type_names_from_database() -> dict[str, dict[str, str]]:
+def get_site_type_from_database() -> dict[str, dict[str, str]]:
     types: defaultdict[Any, dict[str, str]] = defaultdict(dict)
-    for table in TYPE_TABLES:
+    for table in SITE_TYPE_TABLES:
         query = f"""
                 SELECT koda, opis
                 FROM public.{table};
