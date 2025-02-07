@@ -63,6 +63,7 @@ class Place:
             'name': self.name or '',
             'description': f"{self.description}" if self.description else '',
             'type_ids': ' '.join(self.openatlas_types),
+            'value_types': '',
             'wkt': f"{self.coordinate}" if self.coordinate else '',
             'begin_from': f'{self.begin}-01-01' if self.begin else '',
             'begin_to': f'{self.begin}-12-31' if self.begin else '',

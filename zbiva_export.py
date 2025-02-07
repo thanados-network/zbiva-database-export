@@ -69,30 +69,62 @@ def default_to_regular(d: defaultdict[str, Any]) -> dict[str, dict[str, Any]]:
 if __name__ == "__main__":
     # types_names = get_type_names_from_database()
     literature = get_literature_from_database()
-    place_citations = get_place_citation_from_database()
     thanados_types = get_thanados_types()
 
+    #########
+    # Sites #
+    #########
     places = get_places_from_database()
     for place in places:
-        place.get_citations(place_citations)
+        place.get_citations(get_place_citation_from_database())
         place.map_types(thanados_types)
 
-    admin_hierarchy = get_admin_hierarchy()
-    #print(default_to_regular(admin_hierarchy['slovenija'][None]))
-
-
-    # Get only slovenian places
+    # Sort sites by country
     sorted_places_by_country = sort_places_by_country(places)
 
     place_csv_dict = []
-    sorted_places_by_type = defaultdict(list)
-    for i in sorted_places_by_country['slovenija']:
-        sorted_places_by_type[i.primary_type_id].append(i)
-        place_csv_dict.append(i.get_csv_data())
+    slovenia_sites = sorted_places_by_country['slovenija']
+    for site in slovenia_sites:
+        place_csv_dict.append(site.get_csv_data())
 
     sites_df = pd.DataFrame(place_csv_dict)
     sites_df.to_csv('csv/sites.csv', index=False)
 
+    # If we want to import admin units, this is where to begin
+    #admin_hierarchy = get_admin_hierarchy()
+    #print(default_to_regular(admin_hierarchy['slovenija'][None]))
+
+    ##########
+    # Graves #
+    ##########
+    graves = get_graves_from_database()
+    for grave in graves:
+        grave.get_citations(get_grave_citation_from_database())
+        grave.map_types(thanados_types)
+        grave.map_value_types()
+
+    slovenia_site_ids = {site.id_ for site in slovenia_sites}
+    slovenia_graves = []
+    grave_csv_dict = []
+    for grave in graves:
+        if grave.site_id in slovenia_site_ids:
+            slovenia_graves.append(graves)
+            grave_csv_dict.append(grave.get_csv_data())
+
+    grave_df = pd.DataFrame(grave_csv_dict)
+    grave_df.to_csv('csv/graves.csv', index=False)
+
+    ##############################
+    # Export all entities as csv #
+    ##############################
+
+    place_df = sites_df.append(grave_df, ignore_index=True)
+    place_df.to_csv('csv/places.csv', index=False)
+
+
+
+
+    # Todo: include literature for sites, graves, bodies, artifacts
     #place_literature = get_place_literature(literature, citations)
 
     lit_csv_dict = [lit.get_csv_data() for lit in literature]
@@ -100,27 +132,6 @@ if __name__ == "__main__":
     lit_df.to_csv('csv/literature.csv', index=False)
     # print(len(sorted_places_by_type['NVR02']))
     # print(json.dumps(data, ensure_ascii=False).encode('utf8'))
-
-
-    slovenia_place_ids = [i.id_ for i in sorted_places_by_country['slovenija']]
-    grave_citations = get_grave_citation_from_database()
-    graves = get_graves_from_database()
-    for grave in graves:
-        grave.get_citations(grave_citations)
-        grave.map_types(thanados_types)
-
-    grave_csv_dict = []
-    for grave in graves:
-        if grave.site_id in slovenia_place_ids:
-            grave_csv_dict.append(grave.get_csv_data())
-
-    grave_df = pd.DataFrame(grave_csv_dict)
-    grave_df.to_csv('csv/graves.csv', index=False)
-
-
-    place_df = sites_df.append(grave_df, ignore_index=True)
-    place_df.to_csv('csv/places.csv', index=False)
-
 
 
 
