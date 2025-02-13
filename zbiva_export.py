@@ -4,6 +4,7 @@ from typing import Any
 import pandas as pd
 
 from api import get_type_tree_thanados
+from database.bodies import fetch_data_from_table
 from model.citation import Citation
 from model.literature import Literature
 from model.place import Place
@@ -113,6 +114,15 @@ if __name__ == "__main__":
 
     grave_df = pd.DataFrame(grave_csv_dict)
     grave_df.to_csv('csv/graves.csv', index=False)
+
+
+    ##########
+    # Bodies #
+    ##########
+
+
+
+
 
     ##############################
     # Export all entities as csv #
