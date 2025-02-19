@@ -1,34 +1,10 @@
 from collections import defaultdict
-from contextlib import contextmanager
-from typing import Any, Generator
+from typing import Any
 
-import psycopg2
-from psycopg2 import extras
-
-from citation import Citation
-from globals import TYPE_TABLES
-from literature import Literature
-from place import Place
-
-
-@contextmanager
-def get_cursor() -> Generator[Any, None, None]:
-    connection = psycopg2.connect(
-        dbname="zbiva",
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port="5432")
-    cursor: Any = connection.cursor(cursor_factory=extras.RealDictCursor)
-    try:
-        yield cursor
-        connection.commit()
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        cursor.close()
-        connection.close()
+from model.citation import Citation
+from config import get_cursor
+from globals import SITE_TYPE_TABLES
+from model.place import Place
 
 
 def get_places_from_database() -> list[Place]:
@@ -86,8 +62,10 @@ def get_places_from_database() -> list[Place]:
         FROM public.najdisca_najdisce n
         LEFT JOIN public.najdisca_zakladnanajdba zak ON zak.najdisce_id = n.id
         LEFT JOIN public.najdisca_naselbina nasel ON nasel.najdisce_id = n.id
-        LEFT JOIN public.najdisca_najdisce_topografske_lege topo ON topo.najdisce_id = n.id
-        LEFT JOIN public.najdisca_najdisce_najdbe najbe ON najbe.najdisce_id = n.id
+        LEFT JOIN public.najdisca_najdisce_topografske_lege topo ON 
+        topo.najdisce_id = n.id
+        LEFT JOIN public.najdisca_najdisce_najdbe najbe ON najbe.najdisce_id 
+        = n.id
         LEFT JOIN public.najdisca_kultniprostor kult ON kult.najdisce_id = n.id
         LEFT JOIN public.najdisca_grobisce grob ON grob.najdisce_id = n.id
         GROUP BY n.id, zak.obmocje_id, nasel.tip_id, nasel.utrjenost_id, 
@@ -101,27 +79,6 @@ def get_places_from_database() -> list[Place]:
     return places
 
 
-def get_literature_from_database() -> list[Literature]:
-    query = """
-            SELECT
-                id, 
-                avtor AS autor,
-                naslov AS title,
-                publikacija AS publication,
-                leto_objave AS date,
-                kraj_objave AS location, 
-                strani AS pages,
-                signatura AS signature,
-                pdf_link,
-                doi
-            FROM public.literatura_clanek
-            """
-    with get_cursor() as cursor:
-        cursor.execute(query)
-        lit = [Literature(dict(row)) for row in cursor.fetchall()]
-    return lit
-
-
 def get_place_citation_from_database() -> list[Citation]:
     query = """
             SELECT
@@ -129,7 +86,7 @@ def get_place_citation_from_database() -> list[Citation]:
                 citat AS pages,
                 opomba AS description, 
                 clanek_id AS literature_id,
-                najdisce_id AS place_id
+                najdisce_id AS linked_id
             FROM public.najdisca_najdisceliteratura
             """
     with get_cursor() as cursor:
@@ -138,9 +95,9 @@ def get_place_citation_from_database() -> list[Citation]:
     return cit
 
 
-def get_type_names_from_database() -> dict[str, dict[str, str]]:
+def get_site_type_from_database() -> dict[str, dict[str, str]]:
     types: defaultdict[Any, dict[str, str]] = defaultdict(dict)
-    for table in TYPE_TABLES:
+    for table in SITE_TYPE_TABLES:
         query = f"""
                 SELECT koda, opis
                 FROM public.{table};
@@ -149,5 +106,5 @@ def get_type_names_from_database() -> dict[str, dict[str, str]]:
             cursor.execute(query)
             for row in cursor.fetchall():
                 types[table.replace('lastnosti_najdisc_', '')][row['koda']] = \
-                row['opis']
+                    row['opis']
     return types

@@ -1,6 +1,6 @@
 from typing import Any
 
-from citation import Citation
+from model.citation import Citation
 
 
 class Place:
@@ -54,7 +54,7 @@ class Place:
 
     def get_citations(self, citations: list[Citation]) -> None:
         for citation in citations:
-            if citation.place_id == self.id_:
+            if citation.linked_id == self.id_:
                 self.citations.append(citation.get_csv_data())
 
     def get_csv_data(self) -> dict[str, Any]:
@@ -63,12 +63,15 @@ class Place:
             'name': self.name or '',
             'description': f"{self.description}" if self.description else '',
             'type_ids': ' '.join(self.openatlas_types),
+            'value_types': '',
             'wkt': f"{self.coordinate}" if self.coordinate else '',
             'begin_from': f'{self.begin}-01-01' if self.begin else '',
             'begin_to': f'{self.begin}-12-31' if self.begin else '',
             'end_from': f'{self.end}-01-01' if self.end else '',
             'end_to': f'{self.end}-12-31' if self.end else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
+            'parent_id': '',
+            'openatlas_class': 'Place'
         }
 
     def map_types(self, types: dict[str, int]) -> None:
