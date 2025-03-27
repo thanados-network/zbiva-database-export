@@ -47,8 +47,8 @@ def get_graves_from_database() -> list[Grave]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        places = [Grave(dict(row)) for row in cursor.fetchall()]
-    return places
+        graves = [Grave(dict(row)) for row in cursor.fetchall()]
+    return graves
 
 
 def get_grave_citation_from_database() -> list[Citation]:

@@ -6,12 +6,12 @@ from model.citation import Citation
 class Grave:
     def __init__(self, data: dict[str, Any]):
         self.id_ = data.get("id")
-        self.entry_date = data.get("entry_date")
-        self.modification_date = data.get("modification_date")
-        self.entered_by = data.get("entered_by")
+        self.entry_date = data.get("entry_date") # not used
+        self.modification_date = data.get("modification_date") # not used
+        self.entered_by = data.get("entered_by") # not used
         self.earliest = data.get("earliest")
         self.latest = data.get("latest")
-        self.author = data.get("author")
+        self.author = data.get("author") # not used
         self.coordinates = data.get("coordinates")
         self.grave_label = data.get("grave_label")
         self.number_of_deceased = data.get("number_of_deceased")
@@ -20,7 +20,7 @@ class Grave:
         self.depth_from = data.get("depth_from")
         self.depth_to = data.get("depth_to")
         self.deviation_from_north = data.get("deviation_from_north")
-        self.deviation_description = data.get("deviation_description")
+        self.deviation_description = data.get("deviation_description") # not used
         self.coffin_length = data.get("coffin_length")
         self.coffin_width = data.get("coffin_width")
         self.notes = data.get("notes")
@@ -41,7 +41,7 @@ class Grave:
 
     def get_csv_data(self) -> dict[str, Any]:
         return {
-            'id': self.id_,
+            'id': f'grave_{self.id_}',
             'name': self.grave_label or '',
             'description': self.notes,
             'type_ids': ' '.join(self.openatlas_types),
@@ -53,7 +53,7 @@ class Grave:
             'end_from': f'{self.latest}-01-01' if self.latest else '',
             'end_to': f'{self.latest}-12-31' if self.latest else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
-            'parent_id': self.site_id,
+            'parent_id': f'site_{self.site_id}',
             'openatlas_class': 'Feature'
         }
 

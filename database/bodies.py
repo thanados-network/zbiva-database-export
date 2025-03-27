@@ -2,7 +2,7 @@ from config import get_cursor
 from model.bodies import Body
 
 
-def get_graves_from_database() -> list[Body]:
+def get_bodies_from_database() -> list[Body]:
     query = """
         SELECT
             id,
@@ -12,7 +12,7 @@ def get_graves_from_database() -> list[Body]:
             najprej AS earliest,
             najkasneje AS latest,
             dolocevalec AS author,
-            ST_AsText(g.koordinate) as coordinates,
+            ST_AsText(koordinate) as coordinates,
             star_id AS star_id,
             oznaka AS label,
             najmanjsa_starost AS min_age,
@@ -33,7 +33,7 @@ def get_graves_from_database() -> list[Body]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        places = [Body(dict(row)) for row in cursor.fetchall()]
-    return places
+        bodies = [Body(dict(row)) for row in cursor.fetchall()]
+    return bodies
 
 

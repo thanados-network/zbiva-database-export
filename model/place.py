@@ -59,7 +59,7 @@ class Place:
 
     def get_csv_data(self) -> dict[str, Any]:
         return {
-            'id': self.id_,
+            'id': f'site_{self.id_}',
             'name': self.name or '',
             'description': f"{self.description}" if self.description else '',
             'type_ids': ' '.join(self.openatlas_types),
