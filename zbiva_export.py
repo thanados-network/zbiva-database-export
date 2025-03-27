@@ -5,6 +5,7 @@ from typing import Any
 import pandas as pd
 
 from api import get_type_tree_thanados
+from database.artifacts import get_artifact_type_from_database
 from database.bodies import get_bodies_from_database
 from database.grave import get_grave_citation_from_database, \
     get_graves_from_database
@@ -62,6 +63,7 @@ def get_admin_hierarchy() -> dict[str, Any]:
 
     return hierarchy
 
+
 def default_to_regular(d: defaultdict[str, Any]) -> dict[str, dict[str, Any]]:
     if isinstance(d, defaultdict):
         d = {k: default_to_regular(v) for k, v in d.items()}
@@ -69,8 +71,10 @@ def default_to_regular(d: defaultdict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 # Assume these functions are defined elsewhere:
-# get_literature_from_database(), get_thanados_types(), get_places_from_database(),
-# get_place_citation_from_database(), sort_places_by_country(), get_graves_from_database(),
+# get_literature_from_database(), get_thanados_types(),
+# get_places_from_database(),
+# get_place_citation_from_database(), sort_places_by_country(),
+# get_graves_from_database(),
 # get_grave_citation_from_database(), get_place_literature()
 
 # Assume these classes are defined elsewhere:
@@ -108,8 +112,8 @@ if __name__ == "__main__":
     print(f"Sites processing: {time.time() - start_sites:.2f} seconds")
 
     # If we want to import admin units, this is where to begin
-    #admin_hierarchy = get_admin_hierarchy()
-    #print(default_to_regular(admin_hierarchy['slovenija'][None]))
+    # admin_hierarchy = get_admin_hierarchy()
+    # print(default_to_regular(admin_hierarchy['slovenija'][None]))
 
     ##########
     # Graves #
@@ -157,17 +161,46 @@ if __name__ == "__main__":
     bodies_df.to_csv('csv/bodies.csv', index=False)
     print(f"Bodies processing: {time.time() - start_bodies:.2f} seconds")
 
+    #############
+    # Artifacts #
+    #############
+
+    artifact_type = get_artifact_type_from_database()
+    artifact_type_dicts = []
+    for index, (item, types) in enumerate(artifact_type.items()):
+        artifact_type_dicts.append({
+            'id': f'artifact_type_{index}',
+            'name': item,
+            'description': '',
+            'openatlas_parent_id': '256930',
+            'parent_id': '',
+            'openatlas_class': 'type'})
+        for code, name in types.items():
+            artifact_type_dicts.append({
+                'id': f'artifact_type_{code}',
+                'name': name or code,
+                'description': code,
+                'openatlas_parent_id': '',
+                'parent_id': f'artifact_type_{index}',
+                'openatlas_class': 'type'})
+
+    artifact_types_csv = pd.DataFrame(artifact_type_dicts)
+    artifact_types_csv.to_csv('csv/artifact_types.csv', index=False)
+
     ##############################
     # Export all entities as csv #
     ##############################
     start_export_all = time.time()
     print("Joining all place CSV together")
-    place_df = sites_df.append(grave_df.append(bodies_df, ignore_index=True), ignore_index=True)
+    place_df = sites_df.append(grave_df.append(bodies_df, ignore_index=True),
+                               ignore_index=True)
     place_df.to_csv('csv/places.csv', index=False)
-    print(f"Export all places processing: {time.time() - start_export_all:.2f} seconds")
+    print(
+        f"Export all places processing: {time.time() - start_export_all:.2f} "
+        f"seconds")
 
     # Todo: include literature for sites, graves, bodies, artifacts
-    #place_literature = get_place_literature(literature, citations)
+    # place_literature = get_place_literature(literature, citations)
     start_lit = time.time()
     print("Creating and save literature CSV")
     lit_csv_dict = [lit.get_csv_data() for lit in literature]
