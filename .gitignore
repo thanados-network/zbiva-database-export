@@ -1,0 +1,45 @@
+# sensitive data (except example files)
+instance/
+!instance/example_*
+!instance/__init__.py
+
+# cache, system logs
+__pycache__/
+.mypy_cache/
+.bash_history
+.cache/
+
+# compiled files
+*.pyc
+
+# tests
+.coverage
+cover
+
+# created files
+files/
+
+# ide
+.idea
+.ftpconfig
+venv
+
+# npm libs
+openatlas/static/.eggs/
+openatlas/static/node_modules
+openatlas/static/openatlas.egg-info/
+openatlas/static/package-lock.json
+
+# Docker files
+.npm/
+.local/
+/data/
+env.sh
+
+# SonarQube
+.scannerwork/*
+
+.vscode
+/.env
+
+/csv/*
