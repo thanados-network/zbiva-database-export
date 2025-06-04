@@ -27,7 +27,7 @@ class Grave:
         self.notes = data.get("notes")
         self.site_id = data.get("site_id")
         self.primary_type_id = data.get("type_id")
-        self.reference_system_zbiva = f'grob/{self.id_}'
+        self.reference_system_zbiva = f'grob/{self.id_};exact_match'
         self.citations: list[str] = []
         self.grave_types: list[str] = data['grave_types']
         self.openatlas_types: list[str] = ['239450']
