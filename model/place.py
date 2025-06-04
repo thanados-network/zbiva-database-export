@@ -2,6 +2,17 @@ from typing import Any
 
 from model.citation import Citation
 
+prime_type_mapping = {
+    'NVR00': 'ostalo',
+    'NVR01': 'naselbina',
+    'NVR02': 'grobisce',
+    'NVR03': 'zakladna_najdba',
+    'NVR04': 'kultni_prostor',
+    'NVR05': 'ostalo',
+    'NVR06': 'ostalo',
+    'NVR07': 'ostalo',
+}
+
 
 class Place:
     def __init__(self, data: dict[str, Any]):
@@ -31,6 +42,9 @@ class Place:
         self.description_2 = data['description_2']
         self.summary = data['summary']
         self.primary_type_id = data['primary_type_id']
+        self.reference_system_zbiva = (
+            f'najdisce/{prime_type_mapping[self.primary_type_id]}/'
+            f'{self.id_};exact_match')
         self.citations: list[str] = []
         self.site_types: list[str] = self.get_all_site_types(data)
         self.openatlas_types: list[str] = ['239450']
@@ -73,8 +87,9 @@ class Place:
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': '',
             'openatlas_class': 'Place',
+            'reference_system_zbiva': self.reference_system_zbiva,
             'region': self.admin_area,
-            'district':self.admin_unit,
+            'district': self.admin_unit,
             'cadastre': self.admin_settlement}
 
     def map_types(self, types: dict[str, int]) -> None:
