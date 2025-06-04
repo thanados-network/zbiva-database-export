@@ -42,9 +42,10 @@ class Grave:
     def get_csv_data(self) -> dict[str, Any]:
         return {
             'id': f'grave_{self.id_}',
-            'name': self.grave_label or '',
+            'name': self.grave_label or 'Unmarked',
             'description': self.notes,
-            'type_ids': ' '.join(self.openatlas_types),
+            'type_ids': ' '.join(
+                t for t in self.openatlas_types if t != 'None'),
             'value_types': ' '.join(
                 [f'{t};{v}' for t, v in self.openatlas_value_types]),
             'wkt': f"{self.coordinates}" if self.coordinates else '',

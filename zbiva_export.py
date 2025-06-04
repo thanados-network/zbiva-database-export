@@ -1,3 +1,4 @@
+import csv
 import time
 from collections import defaultdict
 from typing import Any
@@ -103,7 +104,23 @@ if __name__ == "__main__":
     # If we want to import admin units, this is where to begin
     admin_hierarchy = get_admin_hierarchy()
     print('ADMIN AREAS')
-    print(default_to_regular(admin_hierarchy['slovenija'][None]))
+    admin_data = default_to_regular(admin_hierarchy['slovenija'][None])
+    print(admin_data)
+    rows = []
+
+    for region, districts in admin_data.items():
+        if region is None:
+            continue
+        for district, cadastres in districts.items():
+            if district is None:
+                continue
+            for cadastre in cadastres:
+                if cadastre:
+                    rows.append((region, district, cadastre))
+
+    df = pd.DataFrame(rows, columns=["region", "district", "cadastre"])
+    df.sort_values(by=["region", "district", "cadastre"], inplace=True)
+    df.to_csv("csv/zbiva_admin.csv", index=False)
 
     ##########
     # Graves #
@@ -184,18 +201,23 @@ if __name__ == "__main__":
     print("Joining all place CSV together")
     place_df = sites_df.append(grave_df.append(bodies_df, ignore_index=True),
                                ignore_index=True)
-    place_df.to_csv('csv/places.csv', index=False)
+    place_df.to_csv('csv/zbiva_places.csv', index=False)
     print(
         f"Export all places processing: {time.time() - start_export_all:.2f} "
         f"seconds")
 
     # Todo: include literature for sites, graves, bodies, artifacts
-    # place_literature = get_place_literature(literature, citations)
+    place_literature = get_place_literature(
+        literature,
+        site_citation + grave_citations)
     start_lit = time.time()
     print("Creating and save literature CSV")
     lit_csv_dict = [lit.get_csv_data() for lit in literature]
     lit_df = pd.DataFrame(lit_csv_dict)
     lit_df.to_csv('csv/literature.csv', index=False)
+    lit_csv_dict = [lit.get_csv_data() for lit in place_literature]
+    lit_df = pd.DataFrame(lit_csv_dict)
+    lit_df.to_csv('csv/zbiva_literature.csv', index=False)
     print(f"Literature processing: {time.time() - start_lit:.2f} seconds")
 
     print(f"Total execution time: {time.time() - start_time:.2f} seconds")

@@ -60,9 +60,10 @@ class Place:
     def get_csv_data(self) -> dict[str, Any]:
         return {
             'id': f'site_{self.id_}',
-            'name': self.name or '',
+            'name': self.name or 'Unknown',
             'description': f"{self.description}" if self.description else '',
-            'type_ids': ' '.join(self.openatlas_types),
+            'type_ids': ' '.join(
+                t for t in self.openatlas_types if t != 'None'),
             'value_types': '',
             'wkt': f"{self.coordinate}" if self.coordinate else '',
             'begin_from': f'{self.begin}-01-01' if self.begin else '',
@@ -71,7 +72,10 @@ class Place:
             'end_to': f'{self.end}-12-31' if self.end else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': '',
-            'openatlas_class': 'Place'        }
+            'openatlas_class': 'Place',
+            'region': self.admin_area,
+            'district':self.admin_unit,
+            'cadastre': self.admin_settlement}
 
     def map_types(self, types: dict[str, int]) -> None:
         for type_code in self.site_types + [self.primary_type_id]:
