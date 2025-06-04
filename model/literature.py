@@ -1,10 +1,5 @@
 from typing import Any
 
-
-def sanitize_name(name: str) -> str:
-    return name.replace(')', '').replace('(', '')
-
-
 class Literature:
     def __init__(self, data: dict[str, Any]) -> None:
         self.id_ = data.get('id')

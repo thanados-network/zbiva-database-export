@@ -9,8 +9,8 @@ from psycopg2 import extras
 def get_cursor() -> Generator[Any, None, None]:
     connection = psycopg2.connect(
         dbname="zbiva",
-        user="postgres",
-        password="postgres",
+        user="openatlas",
+        password="openatlas",
         host="localhost",
         port="5432")
     cursor: Any = connection.cursor(cursor_factory=extras.RealDictCursor)

@@ -54,8 +54,7 @@ class Grave:
             'end_to': f'{self.latest}-12-31' if self.latest else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': f'site_{self.site_id}',
-            'openatlas_class': 'Feature'
-        }
+            'openatlas_class': 'Feature'}
 
     def map_types(self, types: dict[str, int]) -> None:
         own_types = self.grave_types

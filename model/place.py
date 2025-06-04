@@ -71,8 +71,7 @@ class Place:
             'end_to': f'{self.end}-12-31' if self.end else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': '',
-            'openatlas_class': 'Place'
-        }
+            'openatlas_class': 'Place'        }
 
     def map_types(self, types: dict[str, int]) -> None:
         for type_code in self.site_types + [self.primary_type_id]:
