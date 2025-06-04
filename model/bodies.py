@@ -4,7 +4,7 @@ from model.citation import Citation
 
 
 class Body:
-    def __init__(self, data: dict):
+    def __init__(self, data: dict[str, Any]):
         self.id_ = data.get("id")
         self.entry_date = data.get("entry_date")  # not used
         self.modification_date = data.get("modification_date")  # not used
@@ -29,7 +29,7 @@ class Body:
         self.gender_id = data.get("gender_id")
         self.reference_system_zbiva = f'telo/{self.id_};exact_match'
         self.citations: list[str] = []
-        self.openatlas_types: list[str] = ['239450']
+        self.openatlas_types: list[str | None] = ['239450']
         self.body_types = self.get_body_types()
         self.openatlas_value_types: list[tuple[str, Any]] = []
 
@@ -64,7 +64,7 @@ class Body:
         for type_code in self.body_types:
             self.openatlas_types.append(str(types.get(type_code)))
 
-    def get_body_types(self) -> list[str]:
+    def get_body_types(self) -> list[str | None]:
         return [
             self.right_hand_position_id,
             self.head_position_id,
@@ -75,7 +75,7 @@ class Body:
             self.additions_id,
             self.gender_id]
 
-    def map_value_types(self):
+    def map_value_types(self) -> None:
         if self.min_age:
             self.openatlas_value_types.append(('117199', self.min_age))
         if self.max_age:

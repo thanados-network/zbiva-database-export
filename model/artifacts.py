@@ -4,7 +4,7 @@ from model.citation import Citation
 
 
 class Artifact:
-    def __init__(self, data: dict):
+    def __init__(self, data: dict[str, Any]) -> None:
         self.id_ = data.get("id")
         self.entry_date = data.get("entry_date")
         self.modification_date = data.get("modification_date")
@@ -31,15 +31,11 @@ class Artifact:
         self.type_id = data.get("type_id")
         self.citations: list[str] = []
         self.openatlas_types: list[str] = ['239450']
-        self.artifact_types = self.get_artifact_types()
         self.openatlas_value_types: list[tuple[str, Any]] = []
 
 
     def __repr__(self) -> str:
         return str(self.__dict__)
-
-    def get_artifact_types(self):
-        pass
 
     def get_citations(self, citations: list[Citation]) -> None:
         for citation in citations:

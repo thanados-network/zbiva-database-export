@@ -1,4 +1,3 @@
-import csv
 import time
 from collections import defaultdict
 from typing import Any
@@ -52,19 +51,19 @@ def get_thanados_types() -> dict[str, int]:
 
 
 def get_admin_hierarchy() -> dict[str, Any]:
-    hierarchy = defaultdict(
+    hierarchy: Any = defaultdict(
         lambda: defaultdict(
             lambda: defaultdict(
                 lambda: defaultdict(set))))
 
-    for p in places:
-        hierarchy[p.admin_country][p.admin_region][p.admin_area][
-            p.admin_unit].add(p.admin_settlement)
+    for place_ in places:
+        hierarchy[place_.admin_country][place_.admin_region][
+            place_.admin_area][place_.admin_unit].add(place_.admin_settlement)
 
     return hierarchy
 
 
-def default_to_regular(d: defaultdict[str, Any]) -> dict[str, dict[str, Any]]:
+def default_to_regular(d: defaultdict[str, Any]) -> Any:
     if isinstance(d, defaultdict):
         d = {k: default_to_regular(v) for k, v in d.items()}
     return d
@@ -206,7 +205,6 @@ if __name__ == "__main__":
         f"Export all places processing: {time.time() - start_export_all:.2f} "
         f"seconds")
 
-    # Todo: include literature for sites, graves, bodies, artifacts
     place_literature = get_place_literature(
         literature,
         site_citation + grave_citations)

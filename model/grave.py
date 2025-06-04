@@ -67,7 +67,7 @@ class Grave:
         for type_code in own_types:
             self.openatlas_types.append(str(types.get(type_code)))
 
-    def map_value_types(self):
+    def map_value_types(self) -> None:
         if self.number_of_deceased:
             self.openatlas_value_types.append(
                 ('256001', self.number_of_deceased))
