@@ -6,12 +6,12 @@ from model.citation import Citation
 class Grave:
     def __init__(self, data: dict[str, Any]):
         self.id_ = data.get("id")
-        self.entry_date = data.get("entry_date") # not used
-        self.modification_date = data.get("modification_date") # not used
-        self.entered_by = data.get("entered_by") # not used
+        self.entry_date = data.get("entry_date")  # not used
+        self.modification_date = data.get("modification_date")  # not used
+        self.entered_by = data.get("entered_by")  # not used
         self.earliest = data.get("earliest")
         self.latest = data.get("latest")
-        self.author = data.get("author") # not used
+        self.author = data.get("author")  # not used
         self.coordinates = data.get("coordinates")
         self.grave_label = data.get("grave_label")
         self.number_of_deceased = data.get("number_of_deceased")
@@ -20,12 +20,14 @@ class Grave:
         self.depth_from = data.get("depth_from")
         self.depth_to = data.get("depth_to")
         self.deviation_from_north = data.get("deviation_from_north")
-        self.deviation_description = data.get("deviation_description") # not used
+        self.deviation_description = data.get(
+            "deviation_description")  # not used
         self.coffin_length = data.get("coffin_length")
         self.coffin_width = data.get("coffin_width")
         self.notes = data.get("notes")
         self.site_id = data.get("site_id")
         self.primary_type_id = data.get("type_id")
+        self.reference_system_zbiva = f'grob/{self.id_}'
         self.citations: list[str] = []
         self.grave_types: list[str] = data['grave_types']
         self.openatlas_types: list[str] = ['239450']
@@ -55,6 +57,7 @@ class Grave:
             'end_to': f'{self.latest}-12-31' if self.latest else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': f'site_{self.site_id}',
+            'reference_system_zbiva': self.reference_system_zbiva,
             'openatlas_class': 'Feature'}
 
     def map_types(self, types: dict[str, int]) -> None:

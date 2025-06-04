@@ -27,6 +27,7 @@ class Body:
         self.special_features_id = data.get("special_features_id")
         self.additions_id = data.get("additions_id")
         self.gender_id = data.get("gender_id")
+        self.reference_system_zbiva = f'telo/{self.id_}'
         self.citations: list[str] = []
         self.openatlas_types: list[str] = ['239450']
         self.body_types = self.get_body_types()
@@ -51,6 +52,7 @@ class Body:
             'end_to': f'{self.latest}-12-31' if self.latest else '',
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': f'grave_{self.grave_id}',
+            'reference_system_zbiva': self.reference_system_zbiva,
             'openatlas_class': 'Stratigraphic unit'}
 
     def get_citations(self, citations: list[Citation]) -> None:
