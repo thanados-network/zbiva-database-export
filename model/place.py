@@ -3,15 +3,25 @@ from typing import Any
 from model.citation import Citation
 
 prime_type_mapping = {
-    'NVR00': 'ostalo',
-    'NVR01': 'naselbina',
-    'NVR02': 'grobisce',
-    'NVR03': 'zakladna_najdba',
-    'NVR04': 'kultni_prostor',
-    'NVR05': 'ostalo',
-    'NVR06': 'ostalo',
-    'NVR07': 'ostalo',
+    'NVR00': 'ostalo',  # Sonstiges -> Unspecific
+    'NVR01': 'naselbina',  # Siedlung -> Settlement
+    'NVR02': 'grobisce',  # Gräberfeld -> Burial Site
+    'NVR03': 'zakladna_najdba',  # Depotfund
+    'NVR04': 'kultni_prostor',  # Kultplatz -> Ritual Place
+    'NVR05': 'ostalo',  # -> Fortification
+    'NVR06': 'ostalo',  # -> Traffic
+    'NVR07': 'ostalo',  # -> Strayfind
 }
+
+prime_type_to_thanados_types = {
+    'NVR00': 22397,
+    'NVR01': 74,
+    'NVR02': 276847,
+    'NVR03': 77,
+    'NVR04': 76,
+    'NVR05': 226,
+    'NVR06': 22391,
+    'NVR07': 22398}
 
 
 class Place:
@@ -93,5 +103,7 @@ class Place:
             'cadastre': self.admin_settlement}
 
     def map_types(self, types: dict[str, int]) -> None:
+        self.openatlas_types.append(
+            str(prime_type_to_thanados_types[self.primary_type_id]))
         for type_code in self.site_types + [self.primary_type_id]:
             self.openatlas_types.append(str(types.get(type_code)))
