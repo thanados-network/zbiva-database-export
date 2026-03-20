@@ -29,15 +29,97 @@ class Artifact:
         self.preservation_id = data.get("preservation_id")
         self.environment_id = data.get("environment_id")
         self.type_id = data.get("type_id")
+
+        # New relational data
+        self.grave_ids = data.get("grave_ids")
+
+        self.ostalo = data.get("has_ostalo")
+        self.jagoda = data.get("has_jagoda")
+        self.naglavniobrocek = data.get("has_naglavniobrocek")
+        self.noz = data.get("has_noz")
+        self.posoda = data.get("has_posoda")
+        self.prstan = data.get("has_prstan")
+        self.zaponka = data.get("has_zaponka")
+
+        self.material = data.get("material")
+        self.position = data.get("position")
+        self.bead_color = data.get("bead_color")
+        self.bead_ornament = data.get("bead_ornament")
+        self.bead_glass = data.get("bead_glass")
+        self.knife_sheath = data.get("knife_sheath")
+        self.vessel_manufacture = data.get("vessel_manufacture")
+        self.vessel_impression = data.get("vessel_impression")
+        self.vessel_preserved_part = data.get("vessel_preserved_part")
+        self.vessel_ornament = data.get("vessel_ornament")
+        self.vessel_temper_type = data.get("vessel_temper_type")
+
         self.citations: list[str] = []
+        self.artifact_types: list[str] = data.get('artifact_types', [])
         self.openatlas_types: list[str] = ['239450']
         self.openatlas_value_types: list[tuple[str, Any]] = []
-
+        self.reference_system_zbiva = self._get_reference_system_zbiva()
 
     def __repr__(self) -> str:
         return str(self.__dict__)
+
+    def _get_reference_system_zbiva(self) -> str:
+        artifact_type = "predmet"
+        if self.ostalo:
+            artifact_type = "ostalo"
+        elif self.jagoda:
+            artifact_type = "jagoda"
+        elif self.naglavniobrocek:
+            artifact_type = "naglavniobrocek"
+        elif self.noz:
+            artifact_type = "noz"
+        elif self.posoda:
+            artifact_type = "posoda"
+        elif self.prstan:
+            artifact_type = "prstan"
+        elif self.zaponka:
+            artifact_type = "zaponka"
+        return f"{artifact_type}/{self.id_};exact_match"
 
     def get_citations(self, citations: list[Citation]) -> None:
         for citation in citations:
             if citation.linked_id == self.id_:
                 self.citations.append(citation.get_csv_data())
+
+    def get_csv_data(self) -> dict[str, Any]:
+        return {
+            'id': f'artifact_{self.id_}',
+            'name': self.internal_label or 'Unlabeled',
+            'description': self.notes,
+            'type_ids': ' '.join(
+                t for t in self.openatlas_types if t != 'None'),
+            'value_types': ' '.join(
+                [f'{t};{v}' for t, v in self.openatlas_value_types]),
+            'wkt': f"{self.coordinates}" if self.coordinates else '',
+            'begin_from': f'{self.earliest}-01-01' if self.earliest else '',
+            'begin_to': f'{self.earliest}-12-31' if self.earliest else '',
+            'end_from': f'{self.latest}-01-01' if self.latest else '',
+            'end_to': f'{self.latest}-12-31' if self.latest else '',
+            'origin_reference_ids': f"{' '.join(self.citations)}",
+            'parent_id': f'grave_{self.grave_ids}',
+            'reference_system_zbiva': self.reference_system_zbiva,
+            'openatlas_class': 'artifact'}
+
+    def map_types(self, types: dict[str, int]) -> None:
+        own_types = self.artifact_types
+        if self.type_id:
+            own_types += [self.type_id]
+        for type_code in own_types:
+            self.openatlas_types.append(str(types.get(type_code)))
+
+    def map_value_types(self) -> None:
+        if self.number_of_pieces:
+            self.openatlas_value_types.append(
+                ('256001', self.number_of_pieces))
+        if self.length:
+            self.openatlas_value_types.append(('26189', self.length))
+        if self.width:
+            self.openatlas_value_types.append(('26188', self.width))
+        if self.thickness:
+            self.openatlas_value_types.append(('26187', self.thickness))
+        if self.weight:
+            self.openatlas_value_types.append(('26186', self.weight))

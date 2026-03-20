@@ -1,3 +1,4 @@
+import os
 import time
 from collections import defaultdict
 from typing import Any
@@ -5,6 +6,9 @@ from typing import Any
 import pandas as pd
 
 from api import get_type_tree_thanados
+from database.artifacts import (
+    get_artifact_citation_from_database, get_artifacts_from_database,
+    get_artifact_type_from_database)
 from database.bodies import get_bodies_from_database
 from database.grave import get_grave_citation_from_database, \
     get_graves_from_database
@@ -97,6 +101,7 @@ if __name__ == "__main__":
         place_csv_dict.append(site.get_csv_data())
     print("Save sites csv")
     sites_df = pd.DataFrame(place_csv_dict)
+    os.makedirs('csv', exist_ok=True)
     sites_df.to_csv('csv/sites.csv', index=False)
     print(f"Sites processing: {time.time() - start_sites:.2f} seconds")
 
@@ -170,36 +175,54 @@ if __name__ == "__main__":
     #############
     # Artifacts #
     #############
+    start_artifacts = time.time()
+    print("Processing artifacts")
+    artifacts = get_artifacts_from_database()
+    artifact_citations = get_artifact_citation_from_database()
+    for artifact in artifacts:
+        artifact.get_citations(artifact_citations)
+        artifact.map_types(thanados_types)
+        artifact.map_value_types()
+    slovenian_artifacts = []
+    artifacts_csv_dict = []
+    for artifact in artifacts:
+        if artifact.site_id in slovenia_site_ids:
+            slovenian_artifacts.append(artifact)
+            artifacts_csv_dict.append(artifact.get_csv_data())
+    print("Save artifacts CSV")
+    artifacts_df = pd.DataFrame(artifacts_csv_dict)
+    artifacts_df.to_csv('csv/artifacts.csv', index=False)
+    print(
+        f"Artifacts processing: {time.time() - start_artifacts:.2f} seconds")
 
-    # artifact_type = get_artifact_type_from_database()
-    # artifact_type_dicts = []
-    # for index, (item, types) in enumerate(artifact_type.items()):
-    #     artifact_type_dicts.append({
-    #         'id': f'artifact_type_{index}',
-    #         'name': item,
-    #         'description': '',
-    #         'openatlas_parent_id': '256930',
-    #         'parent_id': '',
-    #         'openatlas_class': 'type'})
-    #     for code, name in types.items():
-    #         artifact_type_dicts.append({
-    #             'id': f'artifact_type_{code}',
-    #             'name': name or code,
-    #             'description': code,
-    #             'openatlas_parent_id': '',
-    #             'parent_id': f'artifact_type_{index}',
-    #             'openatlas_class': 'type'})
-#
-    # artifact_types_csv = pd.DataFrame(artifact_type_dicts)
-    # artifact_types_csv.to_csv('csv/artifact_types.csv', index=False)
+    artifact_type = get_artifact_type_from_database()
+    artifact_type_dicts = []
+    for index, (item, types) in enumerate(artifact_type.items()):
+        artifact_type_dicts.append({
+            'id': f'artifact_type_{index}',
+            'name': item,
+            'description': '',
+            'openatlas_parent_id': '256930',
+            'parent_id': '',
+            'openatlas_class': 'type'})
+        for code, name in types.items():
+            artifact_type_dicts.append({
+                'id': f'artifact_type_{code}',
+                'name': name or code,
+                'description': code,
+                'openatlas_parent_id': '',
+                'parent_id': f'artifact_type_{index}',
+                'openatlas_class': 'type'})
+    artifact_types_csv = pd.DataFrame(artifact_type_dicts)
+    artifact_types_csv.to_csv('csv/artifact_types.csv', index=False)
 
     ##############################
     # Export all entities as csv #
     ##############################
     start_export_all = time.time()
     print("Joining all place CSV together")
-    place_df = sites_df.append(grave_df.append(bodies_df, ignore_index=True),
-                               ignore_index=True)
+    place_df = pd.concat(
+        [sites_df, grave_df, bodies_df, artifacts_df], ignore_index=True)
     place_df.to_csv('csv/zbiva_places.csv', index=False)
     print(
         f"Export all places processing: {time.time() - start_export_all:.2f} "
@@ -207,7 +230,7 @@ if __name__ == "__main__":
 
     place_literature = get_place_literature(
         literature,
-        site_citation + grave_citations)
+        site_citation + grave_citations + artifact_citations)
     start_lit = time.time()
     print("Creating and save literature CSV")
     lit_csv_dict = [lit.get_csv_data() for lit in literature]
