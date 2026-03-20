@@ -1,0 +1,68 @@
+| **Category**          | **Code** | **Slovenian**                        | **English**                                | **German**                                  |  OpenAtlas ID    |
+| grobisceoddaljenost   | GRO01    | grobišče do 500 m od naselja         | burial site within 500 m of settlement     | Grabstätte innerhalb von 500 m der Siedlung |                  |
+|                       | GRO02    | grobišče nad 500 m od naselja        | burial site over 500 m from settlement     | Grabstätte über 500 m von der Siedlung      |                  |
+| grobiscepokop         | GRP01    | grob žgan                            | cremation grave                            | Brandgrab                                   |                  |
+|                       | GRP02    | grob okostni                         | skeletal grave                             | Skelettgrab                                 |                  |
+|                       | GRP03    | grob žgan in okostni                 | cremation and skeletal grave               | Brand- und Skelettgrab                      |                  |
+| grobisceprostor       | GRL01    | grobišče ob/v cerkvi                 | burial site by/in a church                 | Grabstätte bei/in einer Kirche              |                  |
+|                       | GRL02    | grobišče brez cerkve                 | burial site without a church               | Grabstätte ohne Kirche                      |                  |
+|                       | GRL03    | grobišče z nekršč. kultnim prostorom | burial site with a non-Christian cult site | Grabstätte mit nichtchristlichem Kultplatz  |                  |
+|                       | GRL04    | grobišče v naselbini                 | burial site in the settlement              | Grabstätte in der Siedlung                  |                  |
+| grobiscetip           | GRT01    | plano grobišče                       | flat burial site                           | Flachgrabstätte                             |                  |
+|                       | GRT02    | gomilno grobišče                     | barrow burial site                         | Hügelgrabstätte                             |                  |
+|                       | GRT03    | plano in gomilno grobišče            | flat and barrow burial site                | Flach- und Hügelgrabstätte                  |                  |
+| grobisceusmerjenost   | GRZJJ    | smer J                               | direction South (S)                        | Richtung Süden (S)                          |                  |
+|                       | GRZJV    | smer JV                              | direction Southeast (SE)                   | Richtung Südost (SO)                        |                  |
+|                       | GRZJZ    | smer JZ                              | direction Southwest (SW)                   | Richtung Südwest (SW)                       |                  |
+|                       | GRZSS    | smer S                               | direction North (N)                        | Richtung Norden (N)                         |                  |
+|                       | GRZSV    | smer SV                              | direction Northeast (NE)                   | Richtung Nordost (NO)                       |                  |
+|                       | GRZSZ    | smer SZ                              | direction Northwest (NW)                   | Richtung Nordwest (NW)                      |                  |
+|                       | GRZVV    | smer V                               | direction East (E)                         | Richtung Osten (O)                          |                  |
+|                       | GRZZZ    | smer Z                               | direction West (W)                         | Richtung Westen (W)                         |                  |
+| grobiscevelikost      | GRV01    | posamičen grob (do 10)               | individual grave (up to 10)                | Einzelgrab (bis 10)                         |                  |
+|                       | GRV02    | 10–60 grobov                         | 10–60 graves                               | 10–60 Gräber                                |                  |
+|                       | GRV03    | 60–150 grobov                        | 60–150 graves                              | 60–150 Gräber                               |                  |
+|                       | GRV04    | nad 150 grobov                       | over 150 graves                            | über 150 Gräber                             |                  |
+| kultniprostortip      | KPR01    | cerkev                               | church                                     | Kirche                                      |                  |
+|                       | KPR02    | drug kultni objekt                   | other cultic site                          | anderer Kultort                             |                  |
+|                       | KPR03    | naravna kultna mesta                 | natural cultic site                        | natürlicher Kultplatz                       |                  |
+| najdba                | PRD01    | lončenina                            | pottery                                    | Keramik                                     |                  |
+|                       | PRD02    | drugi gospodinjski predmeti          | other household items                      | andere Haushaltsgegenstände                 |                  |
+|                       | PRD03    | stavbna oprema                       | building equipment                         | Baueinrichtung                              |                  |
+|                       | PRD04    | neglineno posodje                    | non-clay vessels                           | nichttonhaltiges Geschirr                   |                  |
+|                       | PRD05    | orodje                               | tools                                      | Werkzeuge                                   |                  |
+|                       | PRD06    | orožje                               | weapons                                    | Waffen                                      |                  |
+|                       | PRD07    | noša in nakit                        | clothing and jewelry                       | Kleidung und Schmuck                        |                  |
+|                       | PRD08    | novci                                | coins                                      | Münzen                                      |                  |
+|                       | PRD09    | živalske kosti                       | animal bones                               | Tierknochen                                 |                  |
+|                       | PRD10    | naravni ostanki                      | natural remains                            | natürliche Überreste                        |                  |
+|                       | PRD11    | druge najdbe                         | other finds                                | andere Funde                                |                  |
+| naselbinatip          | NAT01    | naselbina agrarna                    | agricultural settlement                    | landwirtschaftliche Siedlung                |                  |
+|                       | NAT02    | naselbina specializirana             | specialized settlement                     | spezialisierte Siedlung                     |                  |
+|                       | NAT03    | naselbina centralna                  | central settlement                         | zentrale Siedlung                           |                  |
+| naselbinautrjenost    | NAU01    | naselbina neutrjeno                  | unfortified settlement                     | unbefestigte Siedlung                       |                  |
+|                       | NAU02    | naselbina delno utrjeno              | partially fortified settlement             | teilweise befestigte Siedlung               |                  |
+|                       | NAU03    | naselbina utrjeno                    | fortified settlement                       | befestigte Siedlung                         |                  |
+| naselbinavelikost     | NAV01    | majhna naselbina                     | small settlement                           | kleine Siedlung                             |                  |
+|                       | NAV02    | srednja naselbina                    | medium settlement                          | mittlere Siedlung                           |                  |
+|                       | NAV03    | velika naselbina                     | large settlement                           | große Siedlung                              |                  |
+| naselbinavrstesledov  | NAZ01    | vkopane zgradbe                      | semi-dugout buildings                      | teilweise eingesenkte Gebäude               |                  |
+|                       | NAZ02    | nevkopane zgradbe                    | non-dugout buildings                       | nicht eingesenkte Gebäude                   |                  |
+|                       | NAZ03    | zidane zgradbe                       | stone buildings                            | gemauerte Gebäude                           |                  |
+|                       | NAZ04    | neopredeljive zgradbe                | indeterminate buildings                    | nicht zuzuordnende Gebäude                  |                  |
+| primarnakategorija    | NVR00    | druga vrsta najdišča                 | other type of site                         | andere Art von Fundstelle                   |                  |
+|                       | NVR01    | naselbina                            | settlement                                 | Siedlung                                    |                  |
+|                       | NVR02    | grobišče                             | burial site                                | Grabstätte                                  |                  |
+|                       | NVR03    | zaklad                               | treasure                                   | Schatz                                      |                  |
+|                       | NVR04    | kultni prostor                       | cultic site                                | Kultplatz                                   |                  |
+|                       | NVR05    | utrdba/stolp                         | fort/tower                                 | Befestigung/Turm                            |                  |
+|                       | NVR06    | komunikacija                         | communication                              | Kommunikation                               |                  |
+|                       | NVR07    | posamična najdba                     | individual find                            | Einzelfund                                  |                  |
+| topografskalega       | NLE01    | vzpetina                             | hill                                       | Hügel                                       |                  |
+|                       | NLE02    | voda                                 | water                                      | Wasser                                      |                  |
+|                       | NLE03    | rob terase/ježa                      | terrace/edge                               | Terrassenkante                              |                  |
+|                       | NLE04    | ni vzpetina                          | no hill                                    | kein Hügel                                  |                  |
+|                       | NLE05    | jama                                 | cave                                       | Höhle                                       |                  |
+|                       | NLE06    | pobočje                              | slope                                      | Abhang                                      |                  |
+|                       | NLE07    | ravnina                              | plain                                      | Ebene                                       |                  |
+| zakladnanajdbaobmocje | ZAK01    | zaklad znotraj naselbine             | treasure within settlement                 | Schatz innerhalb der Siedlung               |                  |
