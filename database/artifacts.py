@@ -40,61 +40,103 @@ def get_artifacts_from_database() -> list[Artifact]:
                  WHERE predmet_id = p.id) AS grave_ids,
                 
                 -- Boolean-Tabellen (Flag-Tabellen)
-                EXISTS (SELECT 1 FROM public.predmeti_ostalo WHERE predmet_id = p.id) AS has_ostalo,
-                EXISTS (SELECT 1 FROM public.predmeti_jagoda WHERE predmet_id = p.id) AS has_jagoda,
-                EXISTS (SELECT 1 FROM public.predmeti_naglavniobrocek WHERE predmet_id = p.id) AS has_naglavniobrocek,
-                EXISTS (SELECT 1 FROM public.predmeti_noz WHERE predmet_id = p.id) AS has_noz,
-                EXISTS (SELECT 1 FROM public.predmeti_posoda WHERE predmet_id = p.id) AS has_posoda,
-                EXISTS (SELECT 1 FROM public.predmeti_prstan WHERE predmet_id = p.id) AS has_prstan,
-                EXISTS (SELECT 1 FROM public.predmeti_zaponka WHERE predmet_id = p.id) AS has_zaponka,
+                (ost.predmet_id IS NOT NULL) AS has_ostalo,
+                (jag.predmet_id IS NOT NULL) AS has_jagoda,
+                (nob.predmet_id IS NOT NULL) AS has_naglavniobrocek,
+                (noz.predmet_id IS NOT NULL) AS has_noz,
+                (pos.predmet_id IS NOT NULL) AS has_posoda,
+                (prs.predmet_id IS NOT NULL) AS has_prstan,
+                (zap.predmet_id IS NOT NULL) AS has_zaponka,
                 
                 -- Typisierungen & Eigenschaften (lastnosti_predmetov_*)
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_predmet_snovi c 
                  JOIN public.lastnosti_predmetov_snov l ON c.snov_id = l.koda 
                  WHERE c.predmet_id = p.id) AS material,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_predmet_lega c 
                  JOIN public.lastnosti_predmetov_lega l ON c.lega_id = l.koda 
                  WHERE c.predmet_id = p.id) AS position,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_jagoda_barva c 
                  JOIN public.lastnosti_predmetov_jagodabarva l ON c.jagodabarva_id = l.koda 
                  WHERE c.jagoda_id = p.id) AS bead_color,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_jagoda_okras c 
                  JOIN public.lastnosti_predmetov_jagodaokras l ON c.jagodaokras_id = l.koda 
                  WHERE c.jagoda_id = p.id) AS bead_ornament,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_jagoda_steklo c 
                  JOIN public.lastnosti_predmetov_jagodasteklo l ON c.jagodasteklo_id = l.koda 
                  WHERE c.jagoda_id = p.id) AS bead_glass,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_noz_noznica c 
                  JOIN public.lastnosti_predmetov_noznoznica l ON c.noznoznica_id = l.koda 
                  WHERE c.noz_id = p.id) AS knife_sheath,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_posoda_izdelava c 
                  JOIN public.lastnosti_predmetov_posodaizdelava l ON c.posodaizdelava_id = l.koda 
                  WHERE c.posoda_id = p.id) AS vessel_manufacture,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_posoda_odtis c 
                  JOIN public.lastnosti_predmetov_posodaodtis l ON c.posodaodtis_id = l.koda 
                  WHERE c.posoda_id = p.id) AS vessel_impression,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_posoda_ohranjeni_del c 
                  JOIN public.lastnosti_predmetov_posodaohranjenidel l ON c.posodaohranjenidel_id = l.koda 
                  WHERE c.posoda_id = p.id) AS vessel_preserved_part,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_posoda_okras c 
                  JOIN public.lastnosti_predmetov_posodaokras l ON c.posodaokras_id = l.koda 
                  WHERE c.posoda_id = p.id) AS vessel_ornament,
-                (SELECT STRING_AGG(COALESCE(l.opis_de, l.opis), ', ') 
+                (SELECT STRING_AGG(CAST(l.koda AS TEXT), ', ') 
                  FROM public.predmeti_posoda_vrsta_pustila c 
                  JOIN public.lastnosti_predmetov_posodavrstapustila l ON c.posodavrstapustila_id = l.koda 
-                 WHERE c.posoda_id = p.id) AS vessel_temper_type
-                 
-            FROM public.predmeti_predmet p;
+                 WHERE c.posoda_id = p.id) AS vessel_temper_type,
+                
+                -- Weitere Typen aus 1:1 Untertabellen (Posoda)
+                pos.barva_preloma_id AS vessel_break_color,
+                pos.barva_znotraj_id AS vessel_inner_color,
+                pos.barva_zunaj_id AS vessel_outer_color,
+                pos.prismojeni_ostanki_id AS vessel_burnt_residue,
+                pos.tip_ustja_id AS vessel_rim_type,
+                pos.velikost_pustila_id AS vessel_temper_size,
+                pos.vrsta_posode_id AS vessel_type,
+                pos.vsebnost_pustila_id AS vessel_temper_content,
+                
+                -- Jagoda Details
+                jag.prerez_id AS bead_cross_section,
+                jag.tloris_id AS bead_ground_plan,
+                
+                -- Naglavniobrocek
+                nob.oblika_id AS headband_shape,
+                nob.sucnost_id AS headband_twist,
+                
+                -- Noz
+                noz.drzaj_id AS knife_handle,
+                noz.hrbet_oblika_id AS knife_back_shape,
+                noz.hrbet_prehod_id AS knife_back_transition,
+                noz.kanal_za_kri_id AS knife_blood_groove,
+                noz.konica_id AS knife_tip,
+                noz.oblika_trna_id AS knife_tang_shape,
+                noz.ostrina_oblika_id AS knife_blade_shape,
+                noz.ostrina_prehod_id AS knife_blade_transition,
+                noz.rezilo_id AS knife_blade,
+                
+                -- Prstan
+                prs.oblika_id AS ring_shape,
+                
+                -- Zaponka
+                zap.oblika_id AS buckle_shape
+                
+            FROM public.predmeti_predmet p
+            LEFT JOIN public.predmeti_ostalo ost ON p.id = ost.predmet_id
+            LEFT JOIN public.predmeti_jagoda jag ON p.id = jag.predmet_id
+            LEFT JOIN public.predmeti_naglavniobrocek nob ON p.id = nob.predmet_id
+            LEFT JOIN public.predmeti_noz noz ON p.id = noz.predmet_id
+            LEFT JOIN public.predmeti_posoda pos ON p.id = pos.predmet_id
+            LEFT JOIN public.predmeti_prstan prs ON p.id = prs.predmet_id
+            LEFT JOIN public.predmeti_zaponka zap ON p.id = zap.predmet_id;
             """
     with get_cursor() as cursor:
         cursor.execute(query)

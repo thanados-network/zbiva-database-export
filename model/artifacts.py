@@ -52,9 +52,34 @@ class Artifact:
         self.vessel_preserved_part = data.get("vessel_preserved_part")
         self.vessel_ornament = data.get("vessel_ornament")
         self.vessel_temper_type = data.get("vessel_temper_type")
-
         self.citations: list[str] = []
-        self.artifact_types: list[str] = data.get('artifact_types', [])
+
+        # Collect all type codes from relational fields
+        self.artifact_types: list[str] = []
+        type_fields = [
+            "material", "position", "bead_color", "bead_ornament", "bead_glass",
+            "knife_sheath", "vessel_manufacture", "vessel_impression",
+            "vessel_preserved_part", "vessel_ornament", "vessel_temper_type",
+            "vessel_break_color", "vessel_inner_color", "vessel_outer_color",
+            "vessel_burnt_residue", "vessel_rim_type", "vessel_temper_size",
+            "vessel_type", "vessel_temper_content",
+            "bead_cross_section", "bead_ground_plan",
+            "headband_shape", "headband_twist",
+            "knife_handle", "knife_back_shape", "knife_back_transition",
+            "knife_blood_groove", "knife_tip", "knife_tang_shape",
+            "knife_blade_shape", "knife_blade_transition", "knife_blade",
+            "ring_shape", "buckle_shape", "preservation_id", "environment_id",
+            "type_id"
+        ]
+        for field in type_fields:
+            val = data.get(field)
+            if val:
+                # Split by comma (from STRING_AGG) and strip whitespace
+                codes = [c.strip() for c in str(val).split(',')]
+                for code in codes:
+                    if code and code not in self.artifact_types:
+                        self.artifact_types.append(code)
+
         self.openatlas_types: list[str] = ['239450']
         self.openatlas_value_types: list[tuple[str, Any]] = []
         self.reference_system_zbiva = self._get_reference_system_zbiva()
@@ -95,21 +120,22 @@ class Artifact:
             'value_types': ' '.join(
                 [f'{t};{v}' for t, v in self.openatlas_value_types]),
             'wkt': f"{self.coordinates}" if self.coordinates else '',
-            'begin_from': f'{self.earliest}-01-01' if self.earliest else '',
-            'begin_to': f'{self.earliest}-12-31' if self.earliest else '',
-            'end_from': f'{self.latest}-01-01' if self.latest else '',
-            'end_to': f'{self.latest}-12-31' if self.latest else '',
+            'begin_from': f'{self.earliest}-01-01' if self.earliest else None,
+            'begin_to': f'{self.earliest}-12-31' if self.earliest else None,
+            'end_from': f'{self.latest}-01-01' if self.latest else None,
+            'end_to': f'{self.latest}-12-31' if self.latest else None,
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': f'grave_{self.grave_ids}',
             'reference_system_zbiva': self.reference_system_zbiva,
             'openatlas_class': 'artifact'}
 
     def map_types(self, types: dict[str, int]) -> None:
-        own_types = self.artifact_types
-        if self.type_id:
-            own_types += [self.type_id]
-        for type_code in own_types:
-            self.openatlas_types.append(str(types.get(type_code)))
+        for type_code in self.artifact_types:
+            atlas_id = types.get(type_code)
+            if atlas_id:
+                atlas_id_str = str(atlas_id)
+                if atlas_id_str not in self.openatlas_types:
+                    self.openatlas_types.append(atlas_id_str)
 
     def map_value_types(self) -> None:
         if self.number_of_pieces:
