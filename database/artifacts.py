@@ -30,6 +30,7 @@ def get_artifacts_from_database() -> list[Artifact]:
                 p.drugi_merski_podatki AS other_measurements,
                 p.opombe AS notes,
                 p.najdisce_id AS site_id,
+                p.najdisce_id AS place_id,
                 p.ohranjenost_id AS preservation_id,
                 p.okolje_id AS environment_id,
                 p.vrsta_id AS type_id,
