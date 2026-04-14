@@ -59,7 +59,8 @@ class Artifact:
         # Collect all type codes from relational fields
         self.artifact_types: list[str] = []
         type_fields = [
-            "material", "position", "bead_color", "bead_ornament", "bead_glass",
+            "material", "position", "bead_color", "bead_ornament",
+            "bead_glass",
             "knife_sheath", "vessel_manufacture", "vessel_impression",
             "vessel_preserved_part", "vessel_ornament", "vessel_temper_type",
             "vessel_break_color", "vessel_inner_color", "vessel_outer_color",
@@ -72,7 +73,7 @@ class Artifact:
             "knife_blade_shape", "knife_blade_transition", "knife_blade",
             "ring_shape", "buckle_shape", "preservation_id", "environment_id",
             "type_id"
-        ]
+            ]
         for field in type_fields:
             val = data.get(field)
             if val:
@@ -105,7 +106,7 @@ class Artifact:
             artifact_type = "prstan"
         elif self.zaponka:
             artifact_type = "zaponka"
-        return f"{artifact_type}/{self.id_};exact_match"
+        return f"predmet/{artifact_type}/{self.id_};exact_match"
 
     def get_citations(self, citations: list[Citation]) -> None:
         for citation in citations:
@@ -132,10 +133,11 @@ class Artifact:
             'value_types': ' '.join(
                 [f'{t};{v}' for t, v in self.openatlas_value_types]),
             'wkt': f"{self.coordinates}" if self.coordinates else '',
-            'begin_from': f'{self.earliest}-01-01' if self.earliest else None,
-            'begin_to': f'{self.earliest}-12-31' if self.earliest else None,
-            'end_from': f'{self.latest}-01-01' if self.latest else None,
-            'end_to': f'{self.latest}-12-31' if self.latest else None,
+            'begin_from': f'{self.earliest:04}-01-01' if self.earliest else
+            None,
+            'begin_to': f'{self.earliest:04}-12-31' if self.earliest else None,
+            'end_from': f'{self.latest:04}-01-01' if self.latest else None,
+            'end_to': f'{self.latest:04}-12-31' if self.latest else None,
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'body_id': self.body_id,
             'place_id': self.place_id,

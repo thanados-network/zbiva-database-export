@@ -46,10 +46,11 @@ class Body:
             'value_types': ' '.join(
                 [f'{t};{v}' for t, v in self.openatlas_value_types]),
             'wkt': f"{self.coordinates}" if self.coordinates else '',
-            'begin_from': f'{self.earliest}-01-01' if self.earliest else None,
-            'begin_to': f'{self.earliest}-12-31' if self.earliest else None,
-            'end_from': f'{self.latest}-01-01' if self.latest else None,
-            'end_to': f'{self.latest}-12-31' if self.latest else None,
+            'begin_from': f'{self.earliest:04}-01-01' if self.earliest else
+            None,
+            'begin_to': f'{self.earliest:04}-12-31' if self.earliest else None,
+            'end_from': f'{self.latest:04}-01-01' if self.latest else None,
+            'end_to': f'{self.latest:04}-12-31' if self.latest else None,
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': f'grave_{self.grave_id}',
             'reference_system_zbiva': self.reference_system_zbiva,

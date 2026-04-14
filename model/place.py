@@ -11,7 +11,7 @@ prime_type_mapping = {
     'NVR05': 'ostalo',  # -> Fortification
     'NVR06': 'ostalo',  # -> Traffic
     'NVR07': 'ostalo',  # -> Strayfind
-}
+    }
 
 prime_type_to_thanados_types = {
     'NVR00': 22397,
@@ -90,10 +90,10 @@ class Place:
                 t for t in self.openatlas_types if t != 'None'),
             'value_types': '',
             'wkt': f"{self.coordinate}" if self.coordinate else '',
-            'begin_from': f'{self.begin}-01-01' if self.begin else None,
-            'begin_to': f'{self.begin}-12-31' if self.begin else None,
-            'end_from': f'{self.end}-01-01' if self.end else None,
-            'end_to': f'{self.end}-12-31' if self.end else None,
+            'begin_from': f'{self.begin:04}-01-01' if self.begin else None,
+            'begin_to': f'{self.begin:04}-12-31' if self.begin else None,
+            'end_from': f'{self.end:04}-01-01' if self.end else None,
+            'end_to': f'{self.end:04}-12-31' if self.end else None,
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': '',
             'openatlas_class': 'Place',
