@@ -7,7 +7,8 @@ from model.artifacts import Artifact
 from model.citation import Citation
 
 
-def get_artifacts_from_database() -> list[Artifact]:
+def get_artifacts_from_database(
+        gave_body_mapping: dict[str, Any]) -> list[Artifact]:
     query = """
             SELECT 
                 p.id,
@@ -141,7 +142,8 @@ def get_artifacts_from_database() -> list[Artifact]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        artifacts = [Artifact(dict(row)) for row in cursor.fetchall()]
+        artifacts = [Artifact(dict(row), gave_body_mapping) for row in cursor.fetchall()]
+
     return artifacts
 
 

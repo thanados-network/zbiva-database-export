@@ -4,7 +4,10 @@ from model.citation import Citation
 
 
 class Artifact:
-    def __init__(self, data: dict[str, Any]) -> None:
+    def __init__(
+            self,
+            data: dict[str, Any],
+            gave_body_mapping: dict[str, Any]) -> None:
         self.id_ = data.get("id")
         self.entry_date = data.get("entry_date")
         self.modification_date = data.get("modification_date")
@@ -32,7 +35,7 @@ class Artifact:
 
         # New relational data
         self.grave_ids = data.get("grave_ids")
-        self.body_id = data.get("body_id")
+        self.body_id = gave_body_mapping.get(f'grave_{self.grave_ids}')
         self.place_id = data.get("place_id")
 
         self.ostalo = data.get("has_ostalo")
@@ -97,7 +100,7 @@ class Artifact:
         elif self.jagoda:
             artifact_type = "jagoda"
         elif self.naglavniobrocek:
-            artifact_type = "naglavniobrocek"
+            artifact_type = "naglavni_obrocek"
         elif self.noz:
             artifact_type = "noz"
         elif self.posoda:
@@ -116,7 +119,7 @@ class Artifact:
     def get_csv_data(self) -> dict[str, Any]:
         parent_id = None
         if self.body_id:
-            parent_id = f'body_{self.body_id}'
+            parent_id = f'{self.body_id}'
         elif self.grave_ids:
             # If multiple grave_ids are present, we take the first one
             first_grave_id = str(self.grave_ids).split(',')[0].strip()
@@ -156,7 +159,7 @@ class Artifact:
     def map_value_types(self) -> None:
         if self.number_of_pieces:
             self.openatlas_value_types.append(
-                ('256001', self.number_of_pieces))
+                ('284626', self.number_of_pieces))
         if self.length:
             self.openatlas_value_types.append(('26189', self.length))
         if self.width:

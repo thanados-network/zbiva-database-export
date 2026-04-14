@@ -109,7 +109,6 @@ if __name__ == "__main__":
     admin_hierarchy = get_admin_hierarchy()
     print('ADMIN AREAS')
     admin_data = default_to_regular(admin_hierarchy['slovenija'][None])
-    print(admin_data)
     rows = []
 
     for region, districts in admin_data.items():
@@ -172,12 +171,14 @@ if __name__ == "__main__":
     bodies_df.to_csv('csv/bodies.csv', index=False)
     print(f"Bodies processing: {time.time() - start_bodies:.2f} seconds")
 
+    gave_body_mapping = {d['parent_id']: d['id'] for d in bodies_csv_dict}
+
     #############
     # Artifacts #
     #############
     start_artifacts = time.time()
     print("Processing artifacts")
-    artifacts = get_artifacts_from_database()
+    artifacts = get_artifacts_from_database(gave_body_mapping)
     artifact_citations = get_artifact_citation_from_database()
     for artifact in artifacts:
         artifact.get_citations(artifact_citations)
