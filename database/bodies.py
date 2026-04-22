@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from config import get_cursor
 from model.bodies import Body
 
@@ -32,5 +34,6 @@ def get_bodies_from_database() -> list[Body]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        bodies = [Body(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        bodies = [Body(dict(row)) for row in tqdm(rows, desc="Loading bodies from DB")]
     return bodies

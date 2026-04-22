@@ -1,6 +1,8 @@
 from collections import defaultdict
 from typing import Any
 
+from tqdm import tqdm
+
 from config import get_cursor
 from globals import ARTIFACT_TYPE_TABLES
 from model.artifacts import Artifact
@@ -142,7 +144,8 @@ def get_artifacts_from_database(
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        artifacts = [Artifact(dict(row), gave_body_mapping) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        artifacts = [Artifact(dict(row), gave_body_mapping) for row in tqdm(rows, desc="Loading artifacts from DB")]
 
     return artifacts
 
@@ -159,7 +162,8 @@ def get_artifact_citation_from_database() -> list[Citation]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        cit = [Citation(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        cit = [Citation(dict(row)) for row in tqdm(rows, desc="Loading artifact citations from DB")]
     return cit
 
 

@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from config import get_cursor
 from model.literature import Literature
 
@@ -19,5 +21,6 @@ def get_literature_from_database() -> list[Literature]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        lit = [Literature(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        lit = [Literature(dict(row)) for row in tqdm(rows, desc="Loading literature from DB")]
     return lit

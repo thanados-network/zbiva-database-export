@@ -1,6 +1,8 @@
 from collections import defaultdict
 from typing import Any
 
+from tqdm import tqdm
+
 from config import get_cursor
 from globals import SITE_TYPE_TABLES
 from model.citation import Citation
@@ -82,7 +84,8 @@ def get_places_from_database() -> list[Place]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        places = [Place(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        places = [Place(dict(row)) for row in tqdm(rows, desc="Loading sites from DB")]
     return places
 
 
@@ -98,7 +101,8 @@ def get_place_citation_from_database() -> list[Citation]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        cit = [Citation(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        cit = [Citation(dict(row)) for row in tqdm(rows, desc="Loading site citations from DB")]
     return cit
 
 

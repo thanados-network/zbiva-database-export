@@ -1,6 +1,8 @@
 from collections import defaultdict
 from typing import Any
 
+from tqdm import tqdm
+
 from config import get_cursor
 from globals import GRAVE_TYPE_TABLES
 from model.citation import Citation
@@ -47,7 +49,8 @@ def get_graves_from_database() -> list[Grave]:
         """
     with get_cursor() as cursor:
         cursor.execute(query)
-        graves = [Grave(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        graves = [Grave(dict(row)) for row in tqdm(rows, desc="Loading graves from DB")]
     return graves
 
 
@@ -63,7 +66,8 @@ def get_grave_citation_from_database() -> list[Citation]:
             """
     with get_cursor() as cursor:
         cursor.execute(query)
-        cit = [Citation(dict(row)) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        cit = [Citation(dict(row)) for row in tqdm(rows, desc="Loading grave citations from DB")]
     return cit
 
 

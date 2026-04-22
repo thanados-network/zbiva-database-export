@@ -16,10 +16,10 @@ prime_type_mapping = {
 prime_type_to_thanados_types = {
     'NVR00': 22397,
     'NVR01': 74,
-    'NVR02': 276847,
-    'NVR03': 77,
+    'NVR02': 77,
+    'NVR03': 276847,
     'NVR04': 76,
-    'NVR05': 226,
+    'NVR05': 266,
     'NVR06': 22391,
     'NVR07': 22398}
 

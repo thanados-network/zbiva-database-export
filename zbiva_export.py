@@ -4,6 +4,7 @@ from collections import defaultdict
 from typing import Any
 
 import pandas as pd
+from tqdm import tqdm
 
 from api import get_type_tree_thanados
 from database.artifacts import (
@@ -60,7 +61,7 @@ def get_admin_hierarchy() -> dict[str, Any]:
             lambda: defaultdict(
                 lambda: defaultdict(set))))
 
-    for place_ in places:
+    for place_ in tqdm(places, desc='Building admin hierarchy'):
         hierarchy[place_.admin_country][place_.admin_region][
             place_.admin_area][place_.admin_unit].add(place_.admin_settlement)
 
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     print("Getting sites from database")
     places = get_places_from_database()
     site_citation = get_place_citation_from_database()
-    for place in places:
+    for place in tqdm(places, desc='Processing sites'):
         place.get_citations(site_citation)
         place.map_types(thanados_types)
     print("Sort sites by country")
@@ -97,7 +98,7 @@ if __name__ == "__main__":
     print("Creating CSV ")
     place_csv_dict = []
     slovenia_sites = sorted_places_by_country['slovenija']
-    for site in slovenia_sites:
+    for site in tqdm(slovenia_sites, desc='Creating sites CSV'):
         place_csv_dict.append(site.get_csv_data())
         place_csv_dict.append(site.get_csv_data_strayfind_feature())
         place_csv_dict.append(site.get_csv_data_strayfind_stratigraphic())
@@ -134,7 +135,7 @@ if __name__ == "__main__":
     print("Getting graves from database")
     graves = get_graves_from_database()
     grave_citations = get_grave_citation_from_database()
-    for grave in graves:
+    for grave in tqdm(graves, desc='Processing graves'):
         grave.get_citations(grave_citations)
         grave.map_types(thanados_types)
         grave.map_value_types()
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     slovenia_site_ids = {site.id_ for site in slovenia_sites}
     slovenia_graves = []
     grave_csv_dict = []
-    for grave in graves:
+    for grave in tqdm(graves, desc='Filtering Slovenian graves'):
         if grave.site_id in slovenia_site_ids:
             slovenia_graves.append(grave)
             grave_csv_dict.append(grave.get_csv_data())
@@ -158,13 +159,13 @@ if __name__ == "__main__":
     start_bodies = time.time()
     print("Processing bodies")
     bodies = get_bodies_from_database()
-    for body in bodies:
+    for body in tqdm(bodies, desc='Mapping body types'):
         body.map_types(thanados_types)
         body.map_value_types()
     slovenia_grave_ids = {grave.id_ for grave in slovenia_graves}
     slovenian_bodies = []
     bodies_csv_dict = []
-    for body in bodies:
+    for body in tqdm(bodies, desc='Filtering Slovenian bodies'):
         if body.grave_id in slovenia_grave_ids:
             slovenian_bodies.append(body)
             bodies_csv_dict.append(body.get_csv_data())
@@ -182,13 +183,13 @@ if __name__ == "__main__":
     print("Processing artifacts")
     artifacts = get_artifacts_from_database(gave_body_mapping)
     artifact_citations = get_artifact_citation_from_database()
-    for artifact in artifacts:
+    for artifact in tqdm(artifacts, desc='Processing artifacts'):
         artifact.get_citations(artifact_citations)
         artifact.map_types(thanados_types)
         artifact.map_value_types()
     slovenian_artifacts = []
     artifacts_csv_dict = []
-    for artifact in artifacts:
+    for artifact in tqdm(artifacts, desc='Filtering Slovenian artifacts'):
         if artifact.site_id in slovenia_site_ids:
             slovenian_artifacts.append(artifact)
             artifacts_csv_dict.append(artifact.get_csv_data())
@@ -228,7 +229,7 @@ if __name__ == "__main__":
     place_df = pd.concat(
         [sites_df, grave_df, bodies_df, artifacts_df], ignore_index=True)
 
-    for site in slovenia_sites:
+    for site in tqdm(slovenia_sites, desc='Cleaning up non-stratigraphic sites'):
         if not place_df["parent_id"].str.contains(
                 f'stratigraphic_site_{site.id_}', na=False).any():
             mask = (
@@ -250,10 +251,10 @@ if __name__ == "__main__":
         site_citation + grave_citations + artifact_citations)
     start_lit = time.time()
     print("Creating and save literature CSV")
-    lit_csv_dict = [lit.get_csv_data() for lit in literature]
+    lit_csv_dict = [lit.get_csv_data() for lit in tqdm(literature, desc='Creating literature CSV')]
     lit_df = pd.DataFrame(lit_csv_dict)
     lit_df.to_csv('csv/literature.csv', index=False)
-    lit_csv_dict = [lit.get_csv_data() for lit in place_literature]
+    lit_csv_dict = [lit.get_csv_data() for lit in tqdm(place_literature, desc='Creating Slovenian literature CSV')]
     lit_df = pd.DataFrame(lit_csv_dict)
     lit_df.to_csv('csv/zbiva_literature.csv', index=False)
     print(f"Literature processing: {time.time() - start_lit:.2f} seconds")
@@ -273,7 +274,7 @@ def test_which_other_types_exist() -> None:
     chronology_description = set()
     location_description = set()
     author_of_site = set()
-    for place_ in sorted_places_by_country['slovenija']:
+    for place_ in tqdm(sorted_places_by_country['slovenija'], desc='Testing types'):
         location_precision.add(place_.location_precision)
         plot_number.add(place_.plot_number)
         data_quality.add(place_.data_quality)
