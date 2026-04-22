@@ -96,11 +96,27 @@ class Place:
             'end_to': f'{self.end:04}-12-31' if self.end else None,
             'origin_reference_ids': f"{' '.join(self.citations)}",
             'parent_id': '',
-            'openatlas_class': 'Place',
+            'openatlas_class': 'place',
             'reference_system_zbiva': self.reference_system_zbiva,
             'region': self.admin_area,
             'district': self.admin_unit,
             'cadastre': self.admin_settlement}
+
+    def get_csv_data_strayfind_feature(self) -> dict[str, Any]:
+        return {
+            'id': f'feature_site_{self.id_}',
+            'name': f"{self.name or 'Unknown'} strayfinds",
+            'type_ids': '26209',
+            'parent_id': f'site_{self.id_}',
+            'openatlas_class': 'feature'}
+
+    def get_csv_data_strayfind_stratigraphic(self) -> dict[str, Any]:
+        return {
+            'id': f'stratigraphic_site_{self.id_}',
+            'name': f"{self.name or 'Unknown'} strayfinds",
+            'type_ids': '26513',
+            'parent_id': f'feature_site_{self.id_}',
+            'openatlas_class': 'Stratigraphic unit'}
 
     def map_types(self, types: dict[str, int]) -> None:
         self.openatlas_types.append(

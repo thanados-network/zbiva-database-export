@@ -10,8 +10,8 @@ from database.artifacts import (
     get_artifact_citation_from_database, get_artifacts_from_database,
     get_artifact_type_from_database)
 from database.bodies import get_bodies_from_database
-from database.grave import get_grave_citation_from_database, \
-    get_graves_from_database
+from database.grave import (get_grave_citation_from_database,
+                            get_graves_from_database)
 from database.literature import get_literature_from_database
 from database.site import (
     get_place_citation_from_database, get_places_from_database)
@@ -99,6 +99,8 @@ if __name__ == "__main__":
     slovenia_sites = sorted_places_by_country['slovenija']
     for site in slovenia_sites:
         place_csv_dict.append(site.get_csv_data())
+        place_csv_dict.append(site.get_csv_data_strayfind_feature())
+        place_csv_dict.append(site.get_csv_data_strayfind_stratigraphic())
     print("Save sites csv")
     sites_df = pd.DataFrame(place_csv_dict)
     os.makedirs('csv', exist_ok=True)
@@ -220,10 +222,24 @@ if __name__ == "__main__":
     ##############################
     # Export all entities as csv #
     ##############################
+
     start_export_all = time.time()
     print("Joining all place CSV together")
     place_df = pd.concat(
         [sites_df, grave_df, bodies_df, artifacts_df], ignore_index=True)
+
+    for site in slovenia_sites:
+        if not place_df["parent_id"].str.contains(
+                f'stratigraphic_site_{site.id_}', na=False).any():
+            mask = (
+                    place_df["id"].str.contains(
+                        f'stratigraphic_site_{site.id_}',
+                        na=False) |
+                    place_df["id"].str.contains(
+                        f'feature_site_{site.id_}',
+                        na=False))
+            place_df = place_df[~mask]
+
     place_df.to_csv('csv/zbiva_places.csv', index=False)
     print(
         f"Export all places processing: {time.time() - start_export_all:.2f} "

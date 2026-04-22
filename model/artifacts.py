@@ -2,6 +2,9 @@ from typing import Any
 
 from model.citation import Citation
 
+BODY = 0
+GRAVE = 0
+PLACE = 0
 
 class Artifact:
     def __init__(
@@ -37,7 +40,6 @@ class Artifact:
         self.grave_ids = data.get("grave_ids")
         self.body_id = gave_body_mapping.get(f'grave_{self.grave_ids}')
         self.place_id = data.get("place_id")
-
         self.ostalo = data.get("has_ostalo")
         self.jagoda = data.get("has_jagoda")
         self.naglavniobrocek = data.get("has_naglavniobrocek")
@@ -117,15 +119,10 @@ class Artifact:
                 self.citations.append(citation.get_csv_data())
 
     def get_csv_data(self) -> dict[str, Any]:
-        parent_id = None
         if self.body_id:
             parent_id = f'{self.body_id}'
-        elif self.grave_ids:
-            # If multiple grave_ids are present, we take the first one
-            first_grave_id = str(self.grave_ids).split(',')[0].strip()
-            parent_id = f'grave_{first_grave_id}'
-        elif self.place_id:
-            parent_id = f'site_{self.place_id}'
+        else:
+            parent_id = f'stratigraphic_site_{self.place_id}'
 
         return {
             'id': f'artifact_{self.id_}',
