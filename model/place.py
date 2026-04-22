@@ -29,7 +29,10 @@ class Place:
         self.id_ = data['id']
         self.begin = data['begin']
         self.end = data['end']
-        self.name = data['name'] or 'Unknown'
+        name = data.get('name', 'Unknown')
+        parts = name.split('=')
+        self.name = parts[0].strip()
+        self.alias = ';'.join([alias.strip() for alias in parts[1:]])
         self.admin_settlement = data['admin_settlement']
         self.admin_unit = data['admin_unit']
         self.admin_area = data['admin_area']
@@ -85,6 +88,7 @@ class Place:
         return {
             'id': f'site_{self.id_}',
             'name': self.name or 'Unknown',
+            'alias': self.alias,
             'description': f"{self.description}" if self.description else '',
             'type_ids': ' '.join(
                 t for t in self.openatlas_types if t != 'None'),
