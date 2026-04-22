@@ -13,6 +13,16 @@ prime_type_mapping = {
     'NVR07': 'ostalo',  # -> Strayfind
     }
 
+unknown_name_mapping = {
+    'NVR00': 'Unspecific',  # Sonstiges -> Unspecific
+    'NVR01': 'Settlement',  # Siedlung -> Settlement
+    'NVR02': 'Burial Site',  # Gräberfeld -> Burial Site
+    'NVR03': 'Depotfund',  # Depotfund
+    'NVR04': 'Ritual Place',  # Kultplatz -> Ritual Place
+    'NVR05': 'Fortification',  # -> Fortification
+    'NVR06': 'Traffic',  # -> Traffic
+    'NVR07': 'Strayfind',  # -> Strayfind
+    }
 prime_type_to_thanados_types = {
     'NVR00': 22397,
     'NVR01': 74,
@@ -34,10 +44,12 @@ class Place:
         self.admin_country = data['admin_country']
         self.begin = data['begin']
         self.end = data['end']
+        self.primary_type_id = data['primary_type_id']
         name = data.get('name') or 'Unknown'
         parts = name.split('=')
         self.name = parts[0].strip()
         self.name = self.check_brackets()
+        self.name = self.check_unknown()
         self.alias = ';'.join([alias.strip() for alias in parts[1:]])
         self.first_publication = data['first_publication']
         self.location_precision = data['location_precision']
@@ -55,7 +67,6 @@ class Place:
         self.description = data['description']
         self.description_2 = data['description_2']
         self.summary = data['summary']
-        self.primary_type_id = data['primary_type_id']
         self.reference_system_zbiva = (
             f'najdisce/{prime_type_mapping[self.primary_type_id]}/'
             f'{self.id_};exact_match')
@@ -78,6 +89,16 @@ class Place:
             if prefix:
                 name = f'{prefix} {name}'
         return name
+
+    def check_unknown(self) -> str:
+        if self.name == 'Unknown':
+            prefix = (
+                    self.admin_settlement or
+                    self.admin_unit or
+                    self.admin_area)
+            return f'{prefix} {self.primary_type_id}'
+        return self.name
+
 
     def get_all_site_types(self, data: dict[str, Any]) -> list[str]:
         types = data['site_types']
