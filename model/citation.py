@@ -10,9 +10,14 @@ class Citation:
         return str(self.__dict__)
 
     def get_pages(self) -> str:
-        return self.pages.replace(' ', '')
+        if not self.pages:
+            return ""
+        s = self.pages.strip()
+        if (s.startswith("(") and s.endswith(")")) or \
+           (s.startswith("[") and s.endswith("]")):
+            s = s[1:-1].strip()
+        return s.replace(' ', '')
 
     def get_csv_data(self) -> str:
-        pages = self.pages.replace(' ',      '').replace(';', ':') \
-            if self.pages else ''
+        pages = self.get_pages().replace(';', ':')
         return f"literature_{self.origin_literature_id};{pages}"

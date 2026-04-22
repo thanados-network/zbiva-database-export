@@ -27,17 +27,18 @@ prime_type_to_thanados_types = {
 class Place:
     def __init__(self, data: dict[str, Any]):
         self.id_ = data['id']
-        self.begin = data['begin']
-        self.end = data['end']
-        name = data.get('name', 'Unknown')
-        parts = name.split('=')
-        self.name = parts[0].strip()
-        self.alias = ';'.join([alias.strip() for alias in parts[1:]])
         self.admin_settlement = data['admin_settlement']
         self.admin_unit = data['admin_unit']
         self.admin_area = data['admin_area']
         self.admin_region = data['admin_region']
         self.admin_country = data['admin_country']
+        self.begin = data['begin']
+        self.end = data['end']
+        name = data.get('name') or 'Unknown'
+        parts = name.split('=')
+        self.name = parts[0].strip()
+        self.name = self.check_brackets()
+        self.alias = ';'.join([alias.strip() for alias in parts[1:]])
         self.first_publication = data['first_publication']
         self.location_precision = data['location_precision']
         self.coordinate = data['coordinate']
@@ -64,6 +65,19 @@ class Place:
 
     def __repr__(self) -> str:
         return str(self.__dict__)
+
+    def check_brackets(self) -> str:
+        name = self.name.strip()
+        if (name.startswith("(") and name.endswith(")")) or \
+                (name.startswith("[") and name.endswith("]")):
+            name = name[1:-1].strip()
+            prefix = (
+                    self.admin_settlement or
+                    self.admin_unit or
+                    self.admin_area)
+            if prefix:
+                name = f'{prefix} {name}'
+        return name
 
     def get_all_site_types(self, data: dict[str, Any]) -> list[str]:
         types = data['site_types']
