@@ -23,6 +23,7 @@ unknown_name_mapping = {
     'NVR06': 'Traffic',  # -> Traffic
     'NVR07': 'Strayfind',  # -> Strayfind
     }
+
 prime_type_to_thanados_types = {
     'NVR00': 22397,
     'NVR01': 74,
@@ -96,9 +97,8 @@ class Place:
                     self.admin_settlement or
                     self.admin_unit or
                     self.admin_area)
-            return f'{prefix} {self.primary_type_id}'
+            return f'{prefix} {unknown_name_mapping[self.primary_type_id]}'
         return self.name
-
 
     def get_all_site_types(self, data: dict[str, Any]) -> list[str]:
         types = data['site_types']
